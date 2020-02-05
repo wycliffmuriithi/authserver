@@ -3,7 +3,6 @@ package com.wyki.idsauth.configs;
 import com.wyki.idsauth.db.OauthclientdetailsRepo;
 import com.wyki.idsauth.db.UsersRepo;
 import com.wyki.idsauth.db.entities.OauthclientDetails;
-import com.wyki.idsauth.db.entities.StationUsers;
 import com.wyki.idsauth.db.entities.Users;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ import java.util.Random;
  */
 @Service
 @EnableScheduling
-public class TestClass {
+public class CreateResourceserver {
     @Autowired
     OauthclientdetailsRepo oauthclientdetailsRepo;
     @Autowired
@@ -29,7 +28,7 @@ public class TestClass {
     @Autowired
     UsersRepo usersRepo;
 
-    private  Logger LOGGER = Logger.getLogger(TestClass.class);
+    private  Logger LOGGER = Logger.getLogger(CreateResourceserver.class);
 
 //    @Scheduled(fixedRate = 1000 * 5)
     public void runtest(){
@@ -41,10 +40,10 @@ public class TestClass {
         oauthclientDetails.setAuthorities(null);
         oauthclientDetails.setAuthorizedGrantTypes("password,authorization_code,refresh_token,client_credentials");
         oauthclientDetails.setAutoapprove("true");
-        oauthclientDetails.setClientId("police_ob_clientid_"+new Random().nextInt(1000));
+        oauthclientDetails.setClientId("finmanager_clientid_"+new Random().nextInt(1000));
         oauthclientDetails.setClientSecret(encoder.encode("secret"));
         oauthclientDetails.setRefreshTokenValidity(36000);
-        oauthclientDetails.setResourceIds(null);
+        oauthclientDetails.setResourceIds("finmanager");
         oauthclientDetails.setScope("read,write");
         oauthclientDetails.setWebServerRedirectUri(null);
 

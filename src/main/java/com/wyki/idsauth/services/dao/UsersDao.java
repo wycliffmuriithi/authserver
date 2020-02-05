@@ -2,14 +2,14 @@ package com.wyki.idsauth.services.dao;
 
 import com.wyki.idsauth.db.RolesRepo;
 import com.wyki.idsauth.db.UsersRepo;
+import com.wyki.idsauth.db.entities.Roles;
 import com.wyki.idsauth.db.entities.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Class name: UsersDao
@@ -33,7 +33,7 @@ public class UsersDao {
 
     @Transactional
     public Optional<Users> loadUserByusername(String username) {
-        List<Users> dbusersList = dbusersRepo.findByEmail(username);
+        List<Users> dbusersList = dbusersRepo.findByEmailOrPhonenumberAndActiveIsTrue(username,username);
         if (dbusersList.isEmpty()) {
             return Optional.empty();
         } else {
@@ -42,22 +42,50 @@ public class UsersDao {
     }
 
     @Transactional
-    public boolean registerUser(String username, String password) {
-        List<Users> dbusersList = dbusersRepo.findByEmail(username);
+    public boolean registerUser(String firstname, String othernames, String email, String phonenumber,
+                                Date dateofbirth, String gender,String nationality,String identificationnumber, String resourceid) {
+        List<Users> dbusersList = dbusersRepo.findByEmailOrPhonenumber(email,phonenumber);
         if (dbusersList.isEmpty()) {
             Users dbUser = new Users();
-//            dbUser.setUsername(username);
+            dbUser.setFirstname(firstname);
+            dbUser.setOthernames(othernames);
+            dbUser.setEmail(email);
+            dbUser.setPhonenumber(phonenumber);
+            dbUser.setDateofbirth(dateofbirth);
+            dbUser.setGender(gender);
+            dbUser.setNationality(nationality);
+            dbUser.setNationalidnumber(identificationnumber);
 //            dbUser.setPassword(encoder.encode(password));
-//            dbUser.setRegistrationdate(new Date());
-//            dbUser.setRoles(new HashSet<>(roleRepo.findAll()));
-//
-//            dbusersRepo.save(dbUser);
+            dbUser.setRegistrationdate(new Date());
+            dbUser.setResourceid(resourceid);
+
+            dbusersRepo.save(dbUser);
             return true;
         } else {
             //user already registered
             return false;
         }
 
+    }
+
+    public void updateUserPassword(String email,String phonenumber,String password){
+       List<Users> users = dbusersRepo.findByEmailOrPhonenumber(email, phonenumber);
+       if(!users.isEmpty()){
+           Users user = users.get(0);
+           user.setPassword(password);
+           user.setActive(true);
+       }
+       dbusersRepo.saveAll(users);
+    }
+
+    public void deactivateUser(String email,String phonenumber){
+        List<Users> users = dbusersRepo.findByEmailOrPhonenumber(email, phonenumber);
+
+        if(!users.isEmpty()){
+            Users user = users.get(0);
+            user.setActive(false);
+        }
+        dbusersRepo.saveAll(users);
     }
 
     @Transactional

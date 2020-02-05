@@ -3,9 +3,11 @@ package com.wyki.idsauth.db.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Class name: Users
@@ -14,7 +16,7 @@ import java.util.Date;
  */
 @Table(name="users")
 @Entity
-@Data
+@Data @ToString
 @AllArgsConstructor @NoArgsConstructor
 public class Users {
     private String firstname;
@@ -37,7 +39,13 @@ public class Users {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date registrationdate;
+    @Column(columnDefinition = "longtext")
+    private String resourceid;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private StationUsers stationuser;
+//    @ManyToMany
+//    @JoinTable(
+//            name="users_roles",
+//            joinColumns = @JoinColumn(name ="userid"),
+//            inverseJoinColumns = @JoinColumn(name = "roleid"))
+//    private Set<Roles> roles;
 }

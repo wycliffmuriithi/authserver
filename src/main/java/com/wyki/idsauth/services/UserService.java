@@ -1,8 +1,10 @@
 package com.wyki.idsauth.services;
 
 
+import com.wyki.idsauth.db.entities.Roles;
 import com.wyki.idsauth.db.entities.Users;
 import com.wyki.idsauth.services.dao.UsersDao;
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +29,7 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
     @Autowired
     private UsersDao dbusersDao;
+    private static final Logger LOGGER = Logger.getLogger(UserService.class);
 
 //    public UserService(UsersDao dbusersDao){
 //        this.dbusersDao=dbusersDao;
@@ -49,13 +53,15 @@ public class UserService implements UserDetailsService {
 
 
 
-    private List loadUserRoles(Users username){
+    private List loadUserRoles(Users user){
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-//        for (Roles role : username.getStationuser().getRoles()){
+//        LOGGER.info(user.getRoles().size());
+//        for (Roles role : username.getRoles()){
 //            grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
 //        }
-        grantedAuthorities.add(new SimpleGrantedAuthority(username.getStationuser().getRoles().getName()));
-//        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
-        return grantedAuthorities;
+
+//        grantedAuthorities.add(new SimpleGrantedAuthority());
+        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+//        return grantedAuthorities;
     }
 }

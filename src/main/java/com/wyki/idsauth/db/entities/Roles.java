@@ -13,7 +13,7 @@ import java.util.Set;
  * Creater: wgicheru
  * Date:6/17/2019
  */
-@Table(name="RolesConfig")
+@Table(name="rolesconfig")
 @Entity
 @Data @AllArgsConstructor
 @NoArgsConstructor
@@ -23,6 +23,8 @@ public class Roles implements Serializable {
     String name;
     @Column(columnDefinition = "longtext")
     String rules;
-    @OneToMany(mappedBy = "roles", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<StationUsers> stationusers;
+//    @ManyToMany(mappedBy = "roles")
+//    private Set<Users> users;
+    @Column(columnDefinition = "longtext")
+    String resourceid;
 }

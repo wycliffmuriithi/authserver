@@ -7,6 +7,7 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Class name: CustomTokenEnhancer
@@ -19,9 +20,10 @@ public class CustomTokenEnhancer implements TokenEnhancer {
             OAuth2AccessToken accessToken,
             OAuth2Authentication authentication) {
         Map<String, Object> additionalInfo = new HashMap<>();
-
+        Set<String> resourceids = authentication.getOAuth2Request().getResourceIds();
+        String resourcename = resourceids.toArray(new String[resourceids.size()])[0];
         additionalInfo.put(
-                "PoliceOBUser", authentication.getName());
+                resourcename, authentication.getName());
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(
                 additionalInfo);
         return accessToken;

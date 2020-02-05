@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Date:6/18/2019
  */
 public interface OauthclientdetailsRepo extends JpaRepository<OauthclientDetails,String> {
-
+    int countByResourceIds(String resourceid);
 }
