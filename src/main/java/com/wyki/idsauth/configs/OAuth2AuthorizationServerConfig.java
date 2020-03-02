@@ -1,11 +1,13 @@
 package com.wyki.idsauth.configs;
 
+import com.wyki.idsauth.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -36,13 +38,15 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     private AuthenticationManager authenticationManagerBean;
     @Autowired
     private DataSource dataSource;
+    @Autowired
+    UserService userService;
 
 
     @Override
     public void configure(final AuthorizationServerSecurityConfigurer oauthserver) throws Exception {
         oauthserver.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
     }
-
+//
     @Override
     public void configure(final ClientDetailsServiceConfigurer clients) throws Exception {
         clients.jdbc(dataSource);
@@ -51,19 +55,22 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+//        tokenEnhancerChain.setTokenEnhancers(
+//                Arrays.asList(tokenEnhancer(), accessTokenConverter()));
         tokenEnhancerChain.setTokenEnhancers(
-                Arrays.asList(tokenEnhancer(), accessTokenConverter()));
-
+                Arrays.asList(accessTokenConverter()));
         endpoints.tokenStore(tokenStore())
                 .tokenEnhancer(tokenEnhancerChain)
                 .authenticationManager(authenticationManagerBean);
-//                .userDetailsService(userService);
+//                .userDetailsService(userDetailsService);
     }
 
-    @Bean
-    public TokenEnhancer tokenEnhancer() {
-        return new CustomTokenEnhancer();
-    }
+
+
+//    @Bean
+//    public TokenEnhancer tokenEnhancer() {
+//        return new CustomTokenEnhancer();
+//    }
 
     @Bean
     public TokenStore tokenStore() {

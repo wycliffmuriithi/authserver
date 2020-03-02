@@ -42,10 +42,6 @@ public class Users {
     @Column(columnDefinition = "longtext")
     private String resourceid;
 
-//    @ManyToMany
-//    @JoinTable(
-//            name="users_roles",
-//            joinColumns = @JoinColumn(name ="userid"),
-//            inverseJoinColumns = @JoinColumn(name = "roleid"))
-//    private Set<Roles> roles;
+    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    private Set<Userroles> roles;
 }

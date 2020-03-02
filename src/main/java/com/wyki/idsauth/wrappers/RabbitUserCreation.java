@@ -21,4 +21,5 @@ public class RabbitUserCreation {
     String nationality;
     String nationalidnumber;
     String resourceid;
+    String rolename;
 }

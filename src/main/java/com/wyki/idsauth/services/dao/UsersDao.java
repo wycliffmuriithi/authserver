@@ -1,8 +1,10 @@
 package com.wyki.idsauth.services.dao;
 
 import com.wyki.idsauth.db.RolesRepo;
+import com.wyki.idsauth.db.UserrolesRepo;
 import com.wyki.idsauth.db.UsersRepo;
 import com.wyki.idsauth.db.entities.Roles;
+import com.wyki.idsauth.db.entities.Userroles;
 import com.wyki.idsauth.db.entities.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,10 +22,12 @@ import java.util.*;
 public class UsersDao {
     @Autowired
     private UsersRepo dbusersRepo;
-    @Autowired
-    private BCryptPasswordEncoder encoder;
+//    @Autowired
+//    private BCryptPasswordEncoder encoder;
     @Autowired
     RolesRepo roleRepo;
+    @Autowired
+    UserrolesRepo userrolesRepo;
 
 //    public UsersDao(UsersRepo usersRepo, BCryptPasswordEncoder passwordEncoder,RolesRepo roleRepo){
 //        this.dbusersRepo=usersRepo;
@@ -33,7 +37,7 @@ public class UsersDao {
 
     @Transactional
     public Optional<Users> loadUserByusername(String username) {
-        List<Users> dbusersList = dbusersRepo.findByEmailOrPhonenumberAndActiveIsTrue(username,username);
+        List<Users> dbusersList = dbusersRepo.findByEmailOrPhonenumber(username,username);
         if (dbusersList.isEmpty()) {
             return Optional.empty();
         } else {
@@ -43,7 +47,8 @@ public class UsersDao {
 
     @Transactional
     public boolean registerUser(String firstname, String othernames, String email, String phonenumber,
-                                Date dateofbirth, String gender,String nationality,String identificationnumber, String resourceid) {
+                                Date dateofbirth, String gender,String nationality,String identificationnumber,
+                                String resourceid,String rolename) {
         List<Users> dbusersList = dbusersRepo.findByEmailOrPhonenumber(email,phonenumber);
         if (dbusersList.isEmpty()) {
             Users dbUser = new Users();
@@ -60,11 +65,27 @@ public class UsersDao {
             dbUser.setResourceid(resourceid);
 
             dbusersRepo.save(dbUser);
+//            dbUser.setRoles(rolesList);
+            addRoles(rolename,resourceid,dbUser);
             return true;
         } else {
             //user already registered
             return false;
         }
+
+    }
+
+    private void addRoles(String rolename,String resourceid,Users dbUser){
+        List<Roles> rolesList = roleRepo.findByNameAndResourceid(rolename,resourceid);
+        List<Userroles> userrolesList = new ArrayList<>();
+        rolesList.stream().forEach((roles -> {
+            Userroles userroles = new Userroles();
+            userroles.setRoles(roles);
+            userroles.setUsers(dbUser);
+
+            userrolesList.add(userroles);
+        }));
+        userrolesRepo.saveAll(userrolesList);
 
     }
 

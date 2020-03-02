@@ -2,6 +2,7 @@ package com.wyki.idsauth.wrappers;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Class name: RabbitUpdateuserPassword
@@ -9,7 +10,7 @@ import lombok.Data;
  * Date:2/4/2020
  */
 @Data
-@AllArgsConstructor
+@AllArgsConstructor @NoArgsConstructor
 public class RabbitUpdateuserPassword {
     String email;
     String phonenumber;

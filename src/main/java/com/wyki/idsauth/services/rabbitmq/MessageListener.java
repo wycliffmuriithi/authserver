@@ -31,7 +31,8 @@ public class MessageListener {
     public void receiveUsercreationRequest(RabbitUserCreation message) {
         LOGGER.info(message);
         usersDao.registerUser(message.getFirstname(), message.getOthernames(), message.getEmail(), message.getPhonenumber(),
-                message.getDateofbirth(), message.getGender(), message.getNationality(), message.getNationalidnumber(), message.getResourceid());
+                message.getDateofbirth(), message.getGender(), message.getNationality(), message.getNationalidnumber(),
+                message.getResourceid(),message.getRolename());
     }
 
     @RabbitListener(queues = "createresource")

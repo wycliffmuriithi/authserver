@@ -23,8 +23,8 @@ public class Roles implements Serializable {
     String name;
     @Column(columnDefinition = "longtext")
     String rules;
-//    @ManyToMany(mappedBy = "roles")
-//    private Set<Users> users;
+    @OneToMany(mappedBy = "roles")
+    private Set<Userroles> users;
     @Column(columnDefinition = "longtext")
     String resourceid;
 }

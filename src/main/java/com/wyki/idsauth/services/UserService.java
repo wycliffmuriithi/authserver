@@ -2,6 +2,7 @@ package com.wyki.idsauth.services;
 
 
 import com.wyki.idsauth.db.entities.Roles;
+import com.wyki.idsauth.db.entities.Userroles;
 import com.wyki.idsauth.db.entities.Users;
 import com.wyki.idsauth.services.dao.UsersDao;
 import org.jboss.logging.Logger;
@@ -31,37 +32,44 @@ public class UserService implements UserDetailsService {
     private UsersDao dbusersDao;
     private static final Logger LOGGER = Logger.getLogger(UserService.class);
 
-//    public UserService(UsersDao dbusersDao){
+    //    public UserService(UsersDao dbusersDao){
 //        this.dbusersDao=dbusersDao;
 //    }
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username){
+    public UserDetails loadUserByUsername(String username) {
         Optional<Users> databaseusercontainer = dbusersDao.loadUserByusername(username);
 
         User.UserBuilder builder = null;
-        if(databaseusercontainer.isPresent()){
+        if (databaseusercontainer.isPresent()) {
             Users databaseuser = databaseusercontainer.get();
-            builder = User.withUsername(username);
-            builder.password(databaseuser.getPassword());
-            builder.authorities(loadUserRoles(databaseuser));
-        }else{
+            if (databaseuser.isActive()) {
+                builder = User.withUsername(username);
+                builder.password(databaseuser.getPassword());
+                builder.authorities(loadUserRoles(databaseuser));
+
+            } else {
+                LOGGER.info("user is inactive");
+                throw new UsernameNotFoundException("Account is disabled, use OTP to activate");
+            }
+
+        } else {
+            LOGGER.info("user does not exist");
             throw new UsernameNotFoundException(username);
         }
         return builder.build();
     }
 
 
-
-    private List loadUserRoles(Users user){
+    private List loadUserRoles(Users user) {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-//        LOGGER.info(user.getRoles().size());
-//        for (Roles role : username.getRoles()){
-//            grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
-//        }
+        LOGGER.info(user.getRoles().size());
+        for (Userroles userroles : user.getRoles()){
+            grantedAuthorities.add(new SimpleGrantedAuthority(userroles.getRoles().getName()));
+        }
 
 //        grantedAuthorities.add(new SimpleGrantedAuthority());
-        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
-//        return grantedAuthorities;
+//        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+        return grantedAuthorities;
     }
 }

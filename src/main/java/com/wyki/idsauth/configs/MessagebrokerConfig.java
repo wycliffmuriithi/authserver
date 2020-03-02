@@ -59,12 +59,12 @@ public class MessagebrokerConfig implements RabbitListenerConfigurer {
 
     @Bean
     public Binding declarePasswordBiding() {
-        return BindingBuilder.bind(getCreateResourceQueue()).to(getAppExchange()).with(" auth.updatepassword");
+        return BindingBuilder.bind(getUpdateuserPasswordQueue()).to(getAppExchange()).with("auth.updatepassword");
     }
 
     @Bean
     public Binding declareDeactivateuserBiding() {
-        return BindingBuilder.bind(getCreateResourceQueue()).to(getAppExchange()).with("auth.deactivateuser");
+        return BindingBuilder.bind(getDeactivateuserQueue()).to(getAppExchange()).with("auth.deactivateuser");
     }
 
     @Bean
