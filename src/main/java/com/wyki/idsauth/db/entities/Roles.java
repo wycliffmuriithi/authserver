@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -24,7 +25,7 @@ public class Roles implements Serializable {
     @Column(columnDefinition = "longtext")
     String rules;
     @OneToMany(mappedBy = "roles")
-    private Set<Userroles> users;
+    private List<Userroles> users;
     @Column(columnDefinition = "longtext")
     String resourceid;
 }

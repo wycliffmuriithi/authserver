@@ -30,24 +30,31 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
     @Autowired
     private UsersDao dbusersDao;
+    @Autowired
+    LoginAttemptService loginAttemptService;
+
     private static final Logger LOGGER = Logger.getLogger(UserService.class);
 
-    //    public UserService(UsersDao dbusersDao){
-//        this.dbusersDao=dbusersDao;
-//    }
+
+
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) {
         Optional<Users> databaseusercontainer = dbusersDao.loadUserByusername(username);
 
-        User.UserBuilder builder = null;
+
         if (databaseusercontainer.isPresent()) {
             Users databaseuser = databaseusercontainer.get();
+            if(loginAttemptService.isBlocked(databaseuser)){
+                throw new UsernameNotFoundException("Account is disabled, use OTP to activate");
+            }
+
             if (databaseuser.isActive()) {
-                builder = User.withUsername(username);
+                User.UserBuilder builder = User.withUsername(username);
                 builder.password(databaseuser.getPassword());
                 builder.authorities(loadUserRoles(databaseuser));
 
+                return builder.build();
             } else {
                 LOGGER.info("user is inactive");
                 throw new UsernameNotFoundException("Account is disabled, use OTP to activate");
@@ -57,14 +64,15 @@ public class UserService implements UserDetailsService {
             LOGGER.info("user does not exist");
             throw new UsernameNotFoundException(username);
         }
-        return builder.build();
+
     }
 
 
     private List loadUserRoles(Users user) {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        LOGGER.info(user.getRoles().size());
+
         for (Userroles userroles : user.getRoles()){
+//            LOGGER.info("Roles for user "+user.getEmail()+" count "+ user.getRoles().size()+ " name "+userroles.getRoles().getName());
             grantedAuthorities.add(new SimpleGrantedAuthority(userroles.getRoles().getName()));
         }
 

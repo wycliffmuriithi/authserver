@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -43,5 +44,5 @@ public class Users {
     private String resourceid;
 
     @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
-    private Set<Userroles> roles;
+    private List<Userroles> roles;
 }

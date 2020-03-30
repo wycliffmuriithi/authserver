@@ -60,12 +60,10 @@ public class UsersDao {
             dbUser.setGender(gender);
             dbUser.setNationality(nationality);
             dbUser.setNationalidnumber(identificationnumber);
-//            dbUser.setPassword(encoder.encode(password));
             dbUser.setRegistrationdate(new Date());
             dbUser.setResourceid(resourceid);
 
             dbusersRepo.save(dbUser);
-//            dbUser.setRoles(rolesList);
             addRoles(rolename,resourceid,dbUser);
             return true;
         } else {
@@ -87,6 +85,15 @@ public class UsersDao {
         }));
         userrolesRepo.saveAll(userrolesList);
 
+    }
+
+    public void updatePhoneandEmail(String oldphone,String newphone,String newemail){
+        List<Users> users = dbusersRepo.findByEmailOrPhonenumber(oldphone, oldphone);
+        users.stream().forEach(p->{
+            p.setPhonenumber(newphone);
+            p.setEmail(newemail);
+        });
+        dbusersRepo.saveAll(users);
     }
 
     public void updateUserPassword(String email,String phonenumber,String password){

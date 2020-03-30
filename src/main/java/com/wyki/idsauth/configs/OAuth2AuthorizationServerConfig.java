@@ -55,10 +55,10 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-//        tokenEnhancerChain.setTokenEnhancers(
-//                Arrays.asList(tokenEnhancer(), accessTokenConverter()));
         tokenEnhancerChain.setTokenEnhancers(
-                Arrays.asList(accessTokenConverter()));
+                Arrays.asList(tokenEnhancer(), accessTokenConverter()));
+//        tokenEnhancerChain.setTokenEnhancers(
+//                Arrays.asList(accessTokenConverter()));
         endpoints.tokenStore(tokenStore())
                 .tokenEnhancer(tokenEnhancerChain)
                 .authenticationManager(authenticationManagerBean);
@@ -67,10 +67,10 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
 
 
 
-//    @Bean
-//    public TokenEnhancer tokenEnhancer() {
-//        return new CustomTokenEnhancer();
-//    }
+    @Bean
+    public TokenEnhancer tokenEnhancer() {
+        return new CustomTokenEnhancer();
+    }
 
     @Bean
     public TokenStore tokenStore() {

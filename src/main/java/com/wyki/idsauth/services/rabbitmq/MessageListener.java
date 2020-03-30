@@ -2,10 +2,7 @@ package com.wyki.idsauth.services.rabbitmq;
 
 import com.wyki.idsauth.services.dao.ResourceDao;
 import com.wyki.idsauth.services.dao.UsersDao;
-import com.wyki.idsauth.wrappers.RabbitResourceCreation;
-import com.wyki.idsauth.wrappers.RabbitUpdateuserPassword;
-import com.wyki.idsauth.wrappers.RabbitUserCreation;
-import com.wyki.idsauth.wrappers.RabbitUseraccountWrapper;
+import com.wyki.idsauth.wrappers.*;
 import org.jboss.logging.Logger;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
@@ -52,5 +49,12 @@ public class MessageListener {
     public void deactivateuserAccount(RabbitUseraccountWrapper rabbitUseraccountWrapper){
         LOGGER.info(rabbitUseraccountWrapper);
         usersDao.deactivateUser(rabbitUseraccountWrapper.getEmail(),rabbitUseraccountWrapper.getPhonenumber());
+    }
+
+    @RabbitListener(queues = "updatephoneandemail")
+    public void updatephoneAndEmailAccount(RabbitupdatePhoneandEmail rabbitupdatePhoneandEmail){
+        LOGGER.info(rabbitupdatePhoneandEmail);
+        usersDao.updatePhoneandEmail(rabbitupdatePhoneandEmail.getOldphone(),rabbitupdatePhoneandEmail.getNewphone(),
+                rabbitupdatePhoneandEmail.getNewemail());
     }
 }

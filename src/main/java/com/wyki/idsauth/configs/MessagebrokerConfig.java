@@ -46,6 +46,10 @@ public class MessagebrokerConfig implements RabbitListenerConfigurer {
         return new Queue("deactivateuser");
     }
 
+    @Bean
+    public Queue geteditPhoneandEmailQueue() {
+        return new Queue("updatephoneandemail");
+    }
 
     @Bean
     public Binding declareUserBiding() {
@@ -65,6 +69,11 @@ public class MessagebrokerConfig implements RabbitListenerConfigurer {
     @Bean
     public Binding declareDeactivateuserBiding() {
         return BindingBuilder.bind(getDeactivateuserQueue()).to(getAppExchange()).with("auth.deactivateuser");
+    }
+
+    @Bean
+    public Binding declareeditPhoneandEmailBiding() {
+        return BindingBuilder.bind(geteditPhoneandEmailQueue()).to(getAppExchange()).with("auth.updatephoneandemail");
     }
 
     @Bean
