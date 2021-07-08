@@ -3,6 +3,7 @@ package com.wyki.idsauth.services;
 import com.wyki.idsauth.db.entities.Users;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -15,11 +16,11 @@ public class LoginAttemptService {
     private final int MAX_ATTEMPT = 4;
 
 
-    public void loginSucceeded(Users account) {
+    public void loginSucceeded(String accountname) {
         attemptsCache.invalidate(key);
     }
 
-    public void loginFailed(Users account) {
+    public void loginFailed(String accountname) {
         int attempts = 0;
         attempts++;
         attemptsCache.put(key, attempts);

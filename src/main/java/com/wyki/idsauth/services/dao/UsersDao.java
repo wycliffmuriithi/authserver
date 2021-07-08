@@ -87,13 +87,15 @@ public class UsersDao {
 
     }
 
-    public void updatePhoneandEmail(String oldphone,String newphone,String newemail){
-        List<Users> users = dbusersRepo.findByEmailOrPhonenumber(oldphone, oldphone);
-        users.stream().forEach(p->{
-            p.setPhonenumber(newphone);
-            p.setEmail(newemail);
-        });
-        dbusersRepo.saveAll(users);
+    public void updatePhoneandEmail(long userid,String newphone,String newemail){
+        Optional<Users> users = dbusersRepo.findById(userid);
+        if(users.isPresent()){
+            Users dbuser = users.get();
+            dbuser.setPhonenumber(newphone);
+            dbuser.setEmail(newemail);
+            dbusersRepo.save(dbuser);
+        };
+
     }
 
     public void updateUserPassword(String email,String phonenumber,String password){

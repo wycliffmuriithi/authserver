@@ -1,10 +1,9 @@
-package com.wyki.idsauth.services.rabbitmq;
+package com.wyki.idsauth.services.messagebroker;
 
 import com.wyki.idsauth.services.dao.ResourceDao;
 import com.wyki.idsauth.services.dao.UsersDao;
 import com.wyki.idsauth.wrappers.*;
 import org.jboss.logging.Logger;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,37 +23,31 @@ public class MessageListener {
     }
 
 
-    @RabbitListener(queues = "createuser")
-    public void receiveUsercreationRequest(RabbitUserCreation message) {
+//    @RabbitListener(queues = "createuser")
+    public void receiveUsercreationRequest(MessageBrokerUserCreation message) {
         LOGGER.info(message);
         usersDao.registerUser(message.getFirstname(), message.getOthernames(), message.getEmail(), message.getPhonenumber(),
                 message.getDateofbirth(), message.getGender(), message.getNationality(), message.getNationalidnumber(),
                 message.getResourceid(),message.getRolename());
     }
 
-    @RabbitListener(queues = "createresource")
-    public void receiveResourcecreationRequest(RabbitResourceCreation message) {
-        LOGGER.info(message);
-        resourceDao.createResource(message.getResourcename(), message.getSecret());
-    }
-
-    @RabbitListener(queues = "updatepassword")
-    public void receiveUpdatePassword(RabbitUpdateuserPassword updateuserPassword ){
+//    @RabbitListener(queues = "updatepassword")
+    public void receiveUpdatePassword(UpdateuserPassword updateuserPassword ){
         LOGGER.info(updateuserPassword);
         usersDao.updateUserPassword(updateuserPassword.getEmail(),updateuserPassword.getPhonenumber(),
                 updateuserPassword.getPassword());
     }
 
-    @RabbitListener(queues = "deactivateuser")
-    public void deactivateuserAccount(RabbitUseraccountWrapper rabbitUseraccountWrapper){
-        LOGGER.info(rabbitUseraccountWrapper);
-        usersDao.deactivateUser(rabbitUseraccountWrapper.getEmail(),rabbitUseraccountWrapper.getPhonenumber());
+//    @RabbitListener(queues = "deactivateuser")
+    public void deactivateuserAccount(UserDetailsWrapper userDetailsWrapper){
+        LOGGER.info(userDetailsWrapper);
+        usersDao.deactivateUser(userDetailsWrapper.getEmail(), userDetailsWrapper.getPhonenumber());
     }
 
-    @RabbitListener(queues = "updatephoneandemail")
-    public void updatephoneAndEmailAccount(RabbitupdatePhoneandEmail rabbitupdatePhoneandEmail){
+//    @RabbitListener(queues = "updatephoneandemail")
+    public void updateUserDetails(UserDetailsWrapper rabbitupdatePhoneandEmail){
         LOGGER.info(rabbitupdatePhoneandEmail);
-        usersDao.updatePhoneandEmail(rabbitupdatePhoneandEmail.getOldphone(),rabbitupdatePhoneandEmail.getNewphone(),
-                rabbitupdatePhoneandEmail.getNewemail());
+        usersDao.updatePhoneandEmail(rabbitupdatePhoneandEmail.getUserid(),rabbitupdatePhoneandEmail.getPhonenumber(),
+                rabbitupdatePhoneandEmail.getEmail());
     }
 }

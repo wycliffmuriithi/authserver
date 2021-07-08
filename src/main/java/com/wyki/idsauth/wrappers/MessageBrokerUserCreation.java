@@ -11,7 +11,7 @@ import java.util.Date;
  * Date:1/30/2020
  */
 @Data @ToString
-public class RabbitUserCreation {
+public class MessageBrokerUserCreation {
     String firstname;
     String othernames;
     String email;

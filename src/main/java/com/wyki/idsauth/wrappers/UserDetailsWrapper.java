@@ -10,7 +10,8 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class RabbitUseraccountWrapper {
+public class UserDetailsWrapper {
+    long userid;
     String email;
     String phonenumber;
 }
