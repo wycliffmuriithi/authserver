@@ -30,8 +30,8 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
     @Autowired
     private UsersDao dbusersDao;
-    @Autowired
-    LoginAttemptService loginAttemptService;
+//    @Autowired
+//    LoginAttemptService loginAttemptService;
 
     private static final Logger LOGGER = Logger.getLogger(UserService.class);
 
@@ -45,9 +45,9 @@ public class UserService implements UserDetailsService {
 
         if (databaseusercontainer.isPresent()) {
             Users databaseuser = databaseusercontainer.get();
-            if(loginAttemptService.isBlocked(databaseuser)){
-                throw new UsernameNotFoundException("Account is disabled, use OTP to activate");
-            }
+//            if(loginAttemptService.isBlocked(databaseuser)){
+//                throw new UsernameNotFoundException("Account is disabled, use OTP to activate");
+//            }
 
             if (databaseuser.isActive()) {
                 User.UserBuilder builder = User.withUsername(username);

@@ -2,6 +2,7 @@ package com.wyki.idsauth.services.dao;
 
 import com.wyki.idsauth.db.OauthclientdetailsRepo;
 import com.wyki.idsauth.db.entities.OauthclientDetails;
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class ResourceDao {
     @Autowired
     OauthclientdetailsRepo oauthclientdetailsRepo;
+    private static final Logger LOGGER = Logger.getLogger(ResourceDao.class);
 
     /**
      * the name provides values for resourceid and clientid
@@ -22,6 +24,7 @@ public class ResourceDao {
      * @param secret
      */
     public void createResource(String name,String secret){
+        LOGGER.info("creating resource "+name);
         if(oauthclientdetailsRepo.countByResourceIds(name)<1){
             OauthclientDetails oauthclientDetails = new OauthclientDetails();
             oauthclientDetails.setResourceIds(name);
@@ -34,6 +37,8 @@ public class ResourceDao {
             oauthclientDetails.setAutoapprove("true");
 
             oauthclientdetailsRepo.save(oauthclientDetails);
+        }else{
+            LOGGER.info("resource already exists");
         }
 
     }

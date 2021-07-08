@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
  * Date:2/4/2020
  */
 @Data
-@AllArgsConstructor @NoArgsConstructor
 public class RabbitUpdateuserPassword {
     String email;
     String phonenumber;

@@ -9,8 +9,7 @@ import lombok.ToString;
  * Creater: wgicheru
  * Date:3/30/2020
  */
-@Data
-@AllArgsConstructor @ToString
+@Data @ToString
 public class RabbitupdatePhoneandEmail {
     String oldphone,newphone,newemail;
 }
