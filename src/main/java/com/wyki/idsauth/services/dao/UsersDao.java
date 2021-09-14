@@ -7,11 +7,13 @@ import com.wyki.idsauth.db.entities.Roles;
 import com.wyki.idsauth.db.entities.Userroles;
 import com.wyki.idsauth.db.entities.Users;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Class name: UsersDao
@@ -116,6 +118,17 @@ public class UsersDao {
             user.setActive(false);
         }
         dbusersRepo.saveAll(users);
+    }
+
+    public int getUserAttempts(String username){
+        Users user =   dbusersRepo.findByEmailOrPhonenumber(username,username).get(0);
+        return user.getAttempts();
+    }
+
+    public void updateAttempts(String username,int attempts){
+        Users user =   dbusersRepo.findByEmailOrPhonenumber(username,username).get(0);
+        user.setAttempts(attempts);
+        dbusersRepo.save(user);
     }
 
     @Transactional

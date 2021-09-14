@@ -8,7 +8,6 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Class name: Users
@@ -42,6 +41,7 @@ public class Users {
     private Date registrationdate;
     @Column(columnDefinition = "longtext")
     private String resourceid;
+    private int attempts;
 
     @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
     private List<Userroles> roles;

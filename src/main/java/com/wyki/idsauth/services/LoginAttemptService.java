@@ -1,10 +1,8 @@
 package com.wyki.idsauth.services;
 
-import com.wyki.idsauth.db.entities.Users;
+import com.wyki.idsauth.services.dao.UsersDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Class name: LoginAttemptService
@@ -13,24 +11,22 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class LoginAttemptService {
+    @Autowired
+    UsersDao usersDao;
     private final int MAX_ATTEMPT = 4;
 
 
     public void loginSucceeded(String accountname) {
-        attemptsCache.invalidate(key);
+        usersDao.updateAttempts(accountname, 0);
     }
 
     public void loginFailed(String accountname) {
-        int attempts = 0;
+        int attempts = usersDao.getUserAttempts(accountname);
         attempts++;
-        attemptsCache.put(key, attempts);
+        usersDao.updateAttempts(accountname, attempts);
     }
 
-    public boolean isBlocked(Users key) {
-        try {
-            return attemptsCache.get(key) >= MAX_ATTEMPT;
-        } catch (ExecutionException e) {
-            return false;
-        }
+    public boolean isBlocked(String accountname) {
+        return usersDao.getUserAttempts(accountname) >= MAX_ATTEMPT;
     }
 }

@@ -1,7 +1,6 @@
 package com.wyki.idsauth.services;
 
 
-import com.wyki.idsauth.db.entities.Roles;
 import com.wyki.idsauth.db.entities.Userroles;
 import com.wyki.idsauth.db.entities.Users;
 import com.wyki.idsauth.services.dao.UsersDao;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,7 +43,7 @@ public class UserService implements UserDetailsService {
 
         if (databaseusercontainer.isPresent()) {
             Users databaseuser = databaseusercontainer.get();
-            if(loginAttemptService.isBlocked(databaseuser)){
+            if(loginAttemptService.isBlocked(databaseuser.getPhonenumber())){
                 throw new UsernameNotFoundException("Account is disabled, use OTP to activate");
             }
 
