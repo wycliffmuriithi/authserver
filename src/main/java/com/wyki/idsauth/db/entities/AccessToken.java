@@ -11,6 +11,7 @@ import javax.persistence.Table;
 public class AccessToken {
     @Column(name = "token_id") @Id
     String token_id;
+    @Column(name = "token",columnDefinition = "LONGBLOB")
     String token;
     @Column(name = "authentication_id")
     String authentication_id;
@@ -18,6 +19,7 @@ public class AccessToken {
     String user_name;
     @Column(name = "client_id")
     String client_id;
+    @Column(name = "authentication",columnDefinition = "LONGBLOB")
     String authentication;
     @Column(name = "refresh_token")
     String refresh_token;

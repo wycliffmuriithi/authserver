@@ -1,6 +1,7 @@
 package com.wyki.idsauth.configs;
 
 import com.wyki.idsauth.services.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +25,7 @@ import javax.sql.DataSource;
  * Date:6/17/2019
  */
 @Configuration
-@EnableAuthorizationServer
+@EnableAuthorizationServer @Slf4j
 public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
     @Autowired
     private AuthenticationManager authenticationManagerBean;
@@ -41,6 +42,7 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
 //
     @Override
     public void configure(final ClientDetailsServiceConfigurer clients) throws Exception {
+
         clients.jdbc(dataSource);
     }
 

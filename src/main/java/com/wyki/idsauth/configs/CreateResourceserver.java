@@ -30,32 +30,32 @@
 //
 //    private  Logger LOGGER = Logger.getLogger(CreateResourceserver.class);
 //
-////    @Scheduled(fixedRate = 1000 * 5)
+//    @Scheduled(fixedRate = 1000 * 5)
 //    public void runtest(){
 //        //insert a bcrypt encoded record to db
-////        OauthclientDetails oauthclientDetails = new OauthclientDetails();
-////
-////        oauthclientDetails.setAccessTokenValidity(36000);
-////        oauthclientDetails.setAdditionalInformation(null);
-////        oauthclientDetails.setAuthorities(null);
-////        oauthclientDetails.setAuthorizedGrantTypes("password,authorization_code,refresh_token,client_credentials");
-////        oauthclientDetails.setAutoapprove("true");
-////        oauthclientDetails.setClientId("finmanager_clientid_"+new Random().nextInt(1000));
-////        oauthclientDetails.setClientSecret(encoder.encode("secret"));
-////        oauthclientDetails.setRefreshTokenValidity(36000);
-////        oauthclientDetails.setResourceIds("finmanager");
-////        oauthclientDetails.setScope("read,write");
-////        oauthclientDetails.setWebServerRedirectUri(null);
-////
-////        oauthclientdetailsRepo.save(oauthclientDetails);
+//        OauthclientDetails oauthclientDetails = new OauthclientDetails();
+//
+//        oauthclientDetails.setAccessTokenValidity(36000);
+//        oauthclientDetails.setAdditionalInformation(null);
+//        oauthclientDetails.setAuthorities(null);
+//        oauthclientDetails.setAuthorizedGrantTypes("password,authorization_code,refresh_token,client_credentials");
+//        oauthclientDetails.setAutoapprove("true");
+//        oauthclientDetails.setClientId("mpm_clientid_"+new Random().nextInt(1000));
+//        oauthclientDetails.setClientSecret(encoder.encode("secret"));
+//        oauthclientDetails.setRefreshTokenValidity(36000);
+//        oauthclientDetails.setResourceIds("mpm");
+//        oauthclientDetails.setScope("read,write");
+//        oauthclientDetails.setWebServerRedirectUri(null);
+//
+//        oauthclientdetailsRepo.save(oauthclientDetails);
 //
 //
 //
 //        Users users = new Users();
 //        users.setActive(true);
-//        users.setEmail("hosecuter@gmail.com");
-//        users.setPhonenumber("254702416427");
-//        users.setPassword(encoder.encode("accountpassword"));
+//        users.setEmail("wycliffmuriithi@gmail.com");
+//        users.setPhonenumber("254715702887");
+//        users.setPassword(encoder.encode("password"));
 //
 //        usersRepo.save(users);
 //

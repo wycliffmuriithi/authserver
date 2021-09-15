@@ -3,8 +3,6 @@ package com.wyki.idsauth.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,8 +16,8 @@ public class AuthenticationFailureListener implements ApplicationListener<Authen
     private LoginAttemptService loginAttemptService;
 
     public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent e) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        loginAttemptService.loginFailed(auth.getName());
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//
+//        loginAttemptService.loginFailed(auth.getName());
     }
 }
