@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,8 +19,9 @@ public class AuthenticationSuccessEventListener implements ApplicationListener<A
 
     public void onApplicationEvent(AuthenticationSuccessEvent e) {
 
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-//        loginAttemptService.loginSucceeded(e.getAuthentication().getName());
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) e.getAuthentication().getPrincipal();
+//        loginAttemptService.loginSucceeded(user.getUsername());
     }
 }
