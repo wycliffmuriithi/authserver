@@ -18,10 +18,11 @@ public class AuthenticationSuccessEventListener implements ApplicationListener<A
     private LoginAttemptService loginAttemptService;
 
     public void onApplicationEvent(AuthenticationSuccessEvent e) {
-
-
 //        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) e.getAuthentication().getPrincipal();
+//        log.info("principal "+e.getAuthentication().getPrincipal());
+
+        log.info("user "+user.getUsername());
 //        loginAttemptService.loginSucceeded(user.getUsername());
     }
 }

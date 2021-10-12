@@ -43,6 +43,8 @@ public class Users {
     private String resourceid;
     private int attempts;
 
+    private String createdby;
+
     @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
     private List<Userroles> roles;
 }

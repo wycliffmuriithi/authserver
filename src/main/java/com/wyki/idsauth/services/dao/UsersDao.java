@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +49,7 @@ public class UsersDao {
     @Transactional
     public boolean registerUser(String firstname, String othernames, String email, String phonenumber,
                                 Date dateofbirth, String gender,String nationality,String identificationnumber,
-                                String resourceid,String rolename) {
+                                Long roleid,String createdby) {
         List<Users> dbusersList = dbusersRepo.findByEmailOrPhonenumber(email,phonenumber);
         if (dbusersList.isEmpty()) {
             Users dbUser = new Users();
@@ -63,10 +62,11 @@ public class UsersDao {
             dbUser.setNationality(nationality);
             dbUser.setNationalidnumber(identificationnumber);
             dbUser.setRegistrationdate(new Date());
-            dbUser.setResourceid(resourceid);
+            dbUser.setCreatedby(createdby);
+//            dbUser.setResourceid(resourceid);
 
             dbusersRepo.save(dbUser);
-            addRoles(rolename,resourceid,dbUser);
+            addRoles(roleid,dbUser);
             return true;
         } else {
             //user already registered
@@ -75,18 +75,19 @@ public class UsersDao {
 
     }
 
-    private void addRoles(String rolename,String resourceid,Users dbUser){
-        List<Roles> rolesList = roleRepo.findByNameAndResourceid(rolename,resourceid);
-        List<Userroles> userrolesList = new ArrayList<>();
-        rolesList.stream().forEach((roles -> {
-            Userroles userroles = new Userroles();
-            userroles.setRoles(roles);
-            userroles.setUsers(dbUser);
+    private void addRoles(Long roleid,Users dbUser){
+        Optional<Roles> rolesList = roleRepo.findById(roleid);
+        if(rolesList.isPresent()) {
+//            List<Userroles> userrolesList = new ArrayList<>();
+//            rolesList.get().stream().forEach((roles -> {
+                Userroles userroles = new Userroles();
+                userroles.setRoles(rolesList.get());
+                userroles.setUsers(dbUser);
 
-            userrolesList.add(userroles);
-        }));
-        userrolesRepo.saveAll(userrolesList);
-
+//                userrolesList.add(userroles);
+//            }));
+            userrolesRepo.save(userroles);
+        }
     }
 
     public void updatePhoneandEmail(long userid,String newphone,String newemail){
