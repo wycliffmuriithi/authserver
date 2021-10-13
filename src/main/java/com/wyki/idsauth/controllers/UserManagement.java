@@ -58,4 +58,13 @@ public class UserManagement {
 
         return response;
     }
+
+    @GetMapping("/userstats")
+    public ResponseWrapper getUserstats(){
+        ResponseWrapper response = new ResponseWrapper();
+        response.setStatus("success");
+        response.setBody(usersDao.getUserStats());
+
+        return response;
+    }
 }

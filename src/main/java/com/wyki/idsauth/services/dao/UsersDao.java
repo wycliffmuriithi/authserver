@@ -1,6 +1,7 @@
 package com.wyki.idsauth.services.dao;
 
 import com.wyki.idsauth.controllers.wrappers.RoleWrapper;
+import com.wyki.idsauth.controllers.wrappers.UserStats;
 import com.wyki.idsauth.controllers.wrappers.UserWrapper;
 import com.wyki.idsauth.db.RolesRepo;
 import com.wyki.idsauth.db.UserrolesRepo;
@@ -152,6 +153,17 @@ public class UsersDao {
                     userWrapper.setCreationdate(user.getRegistrationdate());
                     return userWrapper;
                 }).collect(Collectors.toList());
+    }
+
+    public UserStats getUserStats(){
+        //registeredusers, activeusers, inactiveusers, newusers
+        UserStats userStats = new UserStats();
+        userStats.setRegisteredusers(dbusersRepo.count());
+        userStats.setActiveusers(dbusersRepo.countByActiveTrue());
+        userStats.setInactiveusers(dbusersRepo.countByActiveFalse());
+        userStats.setNewusers(0);
+
+        return userStats;
     }
 
     public List<RoleWrapper> allRoles() {
