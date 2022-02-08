@@ -11,6 +11,7 @@ import com.wyki.idsauth.db.entities.Userroles;
 import com.wyki.idsauth.db.entities.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,8 +29,8 @@ import java.util.stream.Collectors;
 public class UsersDao {
     @Autowired
     private UsersRepo dbusersRepo;
-    //    @Autowired
-//    private BCryptPasswordEncoder encoder;
+        @Autowired
+    private BCryptPasswordEncoder encoder;
     @Autowired
     RolesRepo roleRepo;
     @Autowired
@@ -108,7 +109,7 @@ public class UsersDao {
         List<Users> users = dbusersRepo.findByEmailOrPhonenumber(email, phonenumber);
         if (!users.isEmpty()) {
             Users user = users.get(0);
-            user.setPassword(password);
+            user.setPassword(encoder.encode(password));
             user.setActive(true);
         }
         dbusersRepo.saveAll(users);
