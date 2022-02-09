@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Class name: Roles
@@ -22,10 +21,10 @@ public class Roles implements Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     long roleid;
     String name;
-    @Column(columnDefinition = "longtext")
+    @Column(columnDefinition = "VARCHAR(1024)")
     String rules;
     @OneToMany(mappedBy = "roles")
     private List<Userroles> users;
-    @Column(columnDefinition = "longtext")
+    @Column(columnDefinition = "VARCHAR(1024)")
     String resourceid;
 }

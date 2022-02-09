@@ -18,6 +18,7 @@ public class ResourceServer   extends ResourceServerConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and().authorizeRequests()
+//                .antMatchers("/api-docs/**").permitAll()
                 .antMatchers("/user/**").hasAuthority("ROLE_ADMIN");
 
     }
@@ -25,7 +26,7 @@ public class ResourceServer   extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(final ResourceServerSecurityConfigurer config) {
         config
-                .resourceId("mobilepaymentmiddleware");
+                .resourceId("staffapp");
 
     }
 }

@@ -23,14 +23,14 @@
 //public class CreateResourceserver {
 //    @Autowired
 //    OauthclientdetailsRepo oauthclientdetailsRepo;
-//    @Autowired
-//    BCryptPasswordEncoder encoder;
+////    @Autowired
+//    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 //    @Autowired
 //    UsersRepo usersRepo;
 //
 //    private  Logger LOGGER = Logger.getLogger(CreateResourceserver.class);
 //
-//    @Scheduled(fixedRate = 1000 * 5)
+//    @Scheduled(fixedRate = 1000 * 5,initialDelay = 5000)
 //    public void runtest(){
 //        //insert a bcrypt encoded record to db
 //        OauthclientDetails oauthclientDetails = new OauthclientDetails();
@@ -40,10 +40,10 @@
 //        oauthclientDetails.setAuthorities(null);
 //        oauthclientDetails.setAuthorizedGrantTypes("password,authorization_code,refresh_token,client_credentials");
 //        oauthclientDetails.setAutoapprove("true");
-//        oauthclientDetails.setClientId("mpm_clientid_"+new Random().nextInt(1000));
+//        oauthclientDetails.setClientId("staffapp_clientid_"+new Random().nextInt(1000));
 //        oauthclientDetails.setClientSecret(encoder.encode("secret"));
 //        oauthclientDetails.setRefreshTokenValidity(36000);
-//        oauthclientDetails.setResourceIds("mpm");
+//        oauthclientDetails.setResourceIds("staffapp");
 //        oauthclientDetails.setScope("read,write");
 //        oauthclientDetails.setWebServerRedirectUri(null);
 //
@@ -53,8 +53,8 @@
 //
 //        Users users = new Users();
 //        users.setActive(true);
-//        users.setEmail("wycliffmuriithi@gmail.com");
-//        users.setPhonenumber("254715702887");
+//        users.setEmail("wycliff.muriithi@kra.go.ke");
+//        users.setPhonenumber("254715702886");
 //        users.setPassword(encoder.encode("password"));
 //
 //        usersRepo.save(users);

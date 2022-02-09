@@ -13,8 +13,8 @@ import javax.persistence.Table;
 public class RefreshToken {
     @Column(name = "token_id") @Id
     String tokenid;
-    @Column(name = "token",columnDefinition = "LONGBLOB")
+    @Column(name = "token",columnDefinition = "BLOB")
     String token;
-    @Column(name = "authentication",columnDefinition = "LONGBLOB")
+    @Column(name = "authentication",columnDefinition = "BLOB")
     String authentication;
 }

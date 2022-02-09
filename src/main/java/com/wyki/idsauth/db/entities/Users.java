@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor @NoArgsConstructor
 public class Users {
     private String firstname;
-    @Column(columnDefinition = "longtext")
+    @Column(columnDefinition = "VARCHAR(1024)")
     private String password;
     private String email;
     private String phonenumber;
@@ -30,16 +30,16 @@ public class Users {
     private  String othernames;
     private Date dateofbirth;
     private String gender;
-    @Column(columnDefinition = "longtext")
+    @Column(columnDefinition = "VARCHAR(1024)")
     private String nationality;
-    @Column(columnDefinition = "longtext")
+    @Column(columnDefinition = "VARCHAR(1024)")
     private String nationalidnumber;
-    @Column(columnDefinition = "tinyint")
+    @Column(columnDefinition = "CHAR(1)")
     private boolean active;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date registrationdate;
-    @Column(columnDefinition = "longtext")
+    @Column(columnDefinition = "VARCHAR(1024)")
     private String resourceid;
     private int attempts;
 

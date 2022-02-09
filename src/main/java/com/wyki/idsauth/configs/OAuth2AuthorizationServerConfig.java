@@ -45,7 +45,10 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
 
     @Override
     public void configure(final AuthorizationServerSecurityConfigurer oauthserver) throws Exception {
-        oauthserver.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
+        oauthserver
+//                .allowFormAuthenticationForClients()
+                .tokenKeyAccess("permitAll()")
+                .checkTokenAccess("isAuthenticated()");
     }
 //
     @Override
@@ -61,7 +64,8 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
                 Arrays.asList(tokenEnhancer(), accessTokenConverter()));
         tokenEnhancerChain.setTokenEnhancers(
                 Arrays.asList(accessTokenConverter()));
-        endpoints.tokenStore(tokenStore())
+        endpoints
+                .tokenStore(tokenStore())
                 .tokenEnhancer(tokenEnhancerChain)
                 .authenticationManager(authenticationManagerBean)
                 .userDetailsService(userService);

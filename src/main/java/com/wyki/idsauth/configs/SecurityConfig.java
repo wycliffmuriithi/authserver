@@ -19,6 +19,19 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //
 //
+
+//    @Autowired
+//    JsonToUrlEncodedAuthenticationFilter jsonAuthenticationFilter;
+//            () throws Exception {
+//        JsonAuthenticationFilter filter = new JsonAuthenticationFilter();
+//        filter.setAuthenticationManager(authenticationManagerBean());
+////        System.out.println("jsonAuthenticationFilter");
+//        return filter;
+//    }
+
+//    protected void configure(HttpSecurity http) throws Exception {
+//        http.addFilterBefore(jsonAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//    }
     @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
