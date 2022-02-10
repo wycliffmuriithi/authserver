@@ -24,7 +24,7 @@ public class JsonToUrlEncodedAuthenticationFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
             ServletException {
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+//        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         if (Objects.equals(request.getContentType(), "application/json") && Objects.equals(((RequestFacade) request).getServletPath(), "/oauth/token")) {
             InputStream is = request.getInputStream();
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -45,7 +45,7 @@ public class JsonToUrlEncodedAuthenticationFilter implements Filter {
 
                 val[0] = result.get(key);
                 r.put(key, val);
-                System.out.println(key+" >>><<<<< "+val);
+//                System.out.println(key+" >>><<<<< "+val);
             }
 
             String[] val = new String[1];
