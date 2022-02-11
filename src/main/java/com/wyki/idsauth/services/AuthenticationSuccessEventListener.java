@@ -22,7 +22,7 @@ public class AuthenticationSuccessEventListener implements ApplicationListener<A
         User user = (User) e.getAuthentication().getPrincipal();
 //        log.info("principal "+e.getAuthentication().getPrincipal());
 
-        log.info("user "+user.getUsername());
+//        log.info("user "+user.getUsername());
 //        loginAttemptService.loginSucceeded(user.getUsername());
     }
 }

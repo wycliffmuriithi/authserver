@@ -17,7 +17,7 @@ public class AuthenticationFailureListener implements ApplicationListener<Authen
     private LoginAttemptService loginAttemptService;
 
     public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent e) {
-        log.info("principal "+e.getAuthentication().getPrincipal());
+//        log.info("principal "+e.getAuthentication().getPrincipal());
 //        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 //
 //        loginAttemptService.loginFailed(auth.getName());

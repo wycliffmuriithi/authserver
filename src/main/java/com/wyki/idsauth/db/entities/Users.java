@@ -42,6 +42,9 @@ public class Users {
     @Column(columnDefinition = "VARCHAR(1024)")
     private String resourceid;
     private int attempts;
+    String employeenumber;
+    String region;
+    String department;
 
     private String createdby;
 

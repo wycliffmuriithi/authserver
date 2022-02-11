@@ -39,7 +39,7 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     @Autowired
     UserService userService;
 
-    @Value("${mpm.auth.signingkey}")
+    @Value("${staffapp.auth.signingkey}")
     String signingkey;
 
 

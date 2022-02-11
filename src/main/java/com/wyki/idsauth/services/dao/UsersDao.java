@@ -1,5 +1,6 @@
 package com.wyki.idsauth.services.dao;
 
+import com.wyki.idsauth.controllers.wrappers.ResponseWrapper;
 import com.wyki.idsauth.controllers.wrappers.RoleWrapper;
 import com.wyki.idsauth.controllers.wrappers.UserStats;
 import com.wyki.idsauth.controllers.wrappers.UserWrapper;
@@ -9,6 +10,9 @@ import com.wyki.idsauth.db.UsersRepo;
 import com.wyki.idsauth.db.entities.Roles;
 import com.wyki.idsauth.db.entities.Userroles;
 import com.wyki.idsauth.db.entities.Users;
+import com.wyki.idsauth.services.ImposterService;
+import com.wyki.idsauth.wrappers.ImposterWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -26,15 +31,18 @@ import java.util.stream.Collectors;
  * Date:6/17/2019
  */
 @Service
+@Slf4j
 public class UsersDao {
     @Autowired
     private UsersRepo dbusersRepo;
-        @Autowired
+    @Autowired
     private BCryptPasswordEncoder encoder;
     @Autowired
     RolesRepo roleRepo;
     @Autowired
     UserrolesRepo userrolesRepo;
+    @Autowired
+    ImposterService imposterService;
 
 //    public UsersDao(UsersRepo usersRepo, BCryptPasswordEncoder passwordEncoder,RolesRepo roleRepo){
 //        this.dbusersRepo=usersRepo;
@@ -53,30 +61,61 @@ public class UsersDao {
     }
 
     @Transactional
-    public boolean registerUser(String firstname, String othernames, String email, String phonenumber,
-                                Date dateofbirth, String gender, String nationality, String identificationnumber,
-                                Long roleid, String createdby) {
+    public ResponseWrapper registerUser(String email, String phonenumber,
+                                        String identificationnumber) {
         List<Users> dbusersList = dbusersRepo.findByEmailOrPhonenumber(email, phonenumber);
+        ResponseWrapper responseWrapper = new ResponseWrapper();
+        responseWrapper.setStatus("failed");
         if (dbusersList.isEmpty()) {
-            Users dbUser = new Users();
-            dbUser.setFirstname(firstname);
-            dbUser.setOthernames(othernames);
-            dbUser.setEmail(email);
-            dbUser.setPhonenumber(phonenumber);
-            dbUser.setDateofbirth(dateofbirth);
-            dbUser.setGender(gender);
-            dbUser.setNationality(nationality);
-            dbUser.setNationalidnumber(identificationnumber);
-            dbUser.setRegistrationdate(new Date());
-            dbUser.setCreatedby(createdby);
+            //check staff
+            Map<Boolean, ImposterWrapper> result = imposterService.checkStaff(identificationnumber);
+            if (result.containsKey(true)) {
+                ImposterWrapper imposterWrapper = result.get(true);
+              ImposterWrapper.StaffDetails.Staff staffDetails = imposterWrapper.getStaffdetails().getStaff();
+
+                if (staffDetails.getStatus().equalsIgnoreCase("Active")) {
+                    Users dbUser = new Users();
+                    dbUser.setFirstname(staffDetails.getSurname());
+                    dbUser.setOthernames(staffDetails.getOthernames());
+                    dbUser.setEmail(email);
+                    dbUser.setPhonenumber(phonenumber);
+                    dbUser.setDateofbirth(new Date());
+                    dbUser.setGender("BINARY");
+                    dbUser.setNationality("KENYAN");
+                    dbUser.setNationalidnumber(identificationnumber);
+                    dbUser.setRegistrationdate(new Date());
+                    dbUser.setCreatedby("");
+                    dbUser.setRegion(staffDetails.getRegionname());
+                    dbUser.setDepartment(staffDetails.getDeptname());
+                    dbUser.setEmployeenumber(staffDetails.getEmpno());
 //            dbUser.setResourceid(resourceid);
 
-            dbusersRepo.save(dbUser);
-            addRoles(roleid, dbUser);
-            return true;
+                    dbusersRepo.save(dbUser);
+//                    addRoles(roleid, dbUser);
+                    responseWrapper.setStatus("success");
+                    responseWrapper.setBody("user created");
+                    return responseWrapper;
+                } else {
+                    //user already registered
+                    responseWrapper.setBody("staff in not an active employee");
+
+                    return responseWrapper;
+                }
+
+
+            } else {
+
+
+                responseWrapper.setBody(result.get(false) == null ? "error creating user" :
+                        result.get(false).getStaffdetails().getResult().getMessage());
+
+                return responseWrapper;
+            }
         } else {
             //user already registered
-            return false;
+            responseWrapper.setBody("user already exists");
+
+            return responseWrapper;
         }
 
     }
@@ -146,17 +185,16 @@ public class UsersDao {
                     userWrapper.setName(user.getFirstname() + " " + user.getOthernames());
                     userWrapper.setPhonenumber(user.getPhonenumber());
                     userWrapper.setActive(user.isActive());
-                    userWrapper.setCreatedby(user.getCreatedby());
                     List<String> rolenames = user.getRoles().stream().map(Userroles::getRoles)
                             .map(Roles::getName)
                             .collect(Collectors.toList());
-                    userWrapper.setRolename(rolenames);
-                    userWrapper.setCreationdate(user.getRegistrationdate());
+
+                    userWrapper.setCreatedon(user.getRegistrationdate());
                     return userWrapper;
                 }).collect(Collectors.toList());
     }
 
-    public UserStats getUserStats(){
+    public UserStats getUserStats() {
         //registeredusers, activeusers, inactiveusers, newusers
         UserStats userStats = new UserStats();
         userStats.setRegisteredusers(dbusersRepo.count());
