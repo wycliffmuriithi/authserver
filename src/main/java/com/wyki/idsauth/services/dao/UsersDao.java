@@ -181,13 +181,15 @@ public class UsersDao {
         return dbusersRepo.findAll(pageable).stream()
                 .map(user -> {
                     UserWrapper userWrapper = new UserWrapper();
+                    userWrapper.setUserid(user.getUserid());
                     userWrapper.setEmail(user.getEmail());
                     userWrapper.setName(user.getFirstname() + " " + user.getOthernames());
                     userWrapper.setPhonenumber(user.getPhonenumber());
+                    userWrapper.setEmployeenumber(user.getEmployeenumber());
+                    userWrapper.setRegion(user.getRegion());
+                    userWrapper.setDepartment(user.getDepartment());
                     userWrapper.setActive(user.isActive());
-                    List<String> rolenames = user.getRoles().stream().map(Userroles::getRoles)
-                            .map(Roles::getName)
-                            .collect(Collectors.toList());
+
 
                     userWrapper.setCreatedon(user.getRegistrationdate());
                     return userWrapper;

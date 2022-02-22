@@ -11,7 +11,7 @@ public class UserWrapper {
     String nationalid;
     String email;
     String phonenumber;
-    String password;
+//    String password;
 
     String employeenumber;
     String region;
