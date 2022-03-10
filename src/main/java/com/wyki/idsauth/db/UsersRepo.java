@@ -10,6 +10,8 @@ import java.util.List;
 public interface UsersRepo extends JpaRepository<Users, Long> {
     List<Users> findByEmailOrPhonenumberAndActiveIsTrue(String email, String phonenumber);
     List<Users> findByEmailOrPhonenumber(String email, String phonenumber);
+    List<Users> findByEmailOrPhonenumberOrNationalidnumber(String email, String phonenumber,String nationalidnumber);
+    List<Users> findByNationalidnumber(String nationalidnumber);
 
     int countByActiveTrue();
     int countByActiveFalse();

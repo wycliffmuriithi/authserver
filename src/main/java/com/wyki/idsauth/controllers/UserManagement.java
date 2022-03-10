@@ -1,6 +1,7 @@
 package com.wyki.idsauth.controllers;
 
 import com.wyki.idsauth.controllers.wrappers.AddUserDTO;
+import com.wyki.idsauth.controllers.wrappers.PasswordDTO;
 import com.wyki.idsauth.controllers.wrappers.ResponseWrapper;
 import com.wyki.idsauth.services.dao.UsersDao;
 import lombok.extern.slf4j.Slf4j;
@@ -18,16 +19,25 @@ public class UserManagement {
     @PostMapping("/register")
     public ResponseWrapper registerUser(@RequestBody AddUserDTO userWrapper) {
 
-        ResponseWrapper responseWrapper = usersDao.registerUser( userWrapper.getEmail(), userWrapper.getPhonenumber(),
-                 userWrapper.getNationalid());
+        ResponseWrapper responseWrapper = usersDao.registerUser(userWrapper.getNationalid());
 
-        if (responseWrapper.getStatus().equals("success")) {
-            usersDao.updateUserPassword(userWrapper.getEmail(), userWrapper.getPhonenumber(), userWrapper.getPassword());
+//        if (responseWrapper.getStatus().equals("success")) {
+//            usersDao.updateUserPassword(userWrapper.getEmail(), userWrapper.getPhonenumber(), userWrapper.getPassword());
 //            response.setStatus("success");
 //            response.setBody("user created successfully");
 
-        }
+//        }
         return responseWrapper;
+    }
+
+    @PostMapping("/updatepassword")
+    public ResponseWrapper updatePassword(@RequestBody PasswordDTO passwordDTO){
+        return usersDao.updateUserPassword(passwordDTO.getNationalid(), passwordDTO.getOtp(), passwordDTO.getPassword());
+    }
+
+    @PostMapping("/forgotpassword")
+    public ResponseWrapper forgotPassword(@RequestBody AddUserDTO addUserDTO){
+        return usersDao.forgotPassword(addUserDTO.getNationalid());
     }
 
     @GetMapping("/roles")

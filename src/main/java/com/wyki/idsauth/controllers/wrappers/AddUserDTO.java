@@ -7,7 +7,7 @@ import lombok.Data;
 @Data @JsonIgnoreProperties(ignoreUnknown = true) @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AddUserDTO {
     String nationalid;
-    String email;
-    String phonenumber;
-    String password;
+//    String email;
+//    String phonenumber;
+//    String password;
 }
