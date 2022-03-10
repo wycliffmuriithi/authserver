@@ -46,6 +46,11 @@ public class Users {
     String region;
     String department;
 
+    String otp;
+    @Column(columnDefinition = "CHAR(1) DEFAULT 0")
+    boolean validotp;
+    Date otpexpirytime;
+
     private String createdby;
 
     @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
