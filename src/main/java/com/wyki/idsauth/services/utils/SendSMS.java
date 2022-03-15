@@ -24,6 +24,6 @@ public class SendSMS {
     public void sendSMS(String message, String phonenumber) {
         log.info("send text to "+phonenumber);
         restTemplate.getForEntity(smsendpoint+"sms?action=sendmessage&username="+smsusername+"&password="
-                +smspassword+"&recipient="+phonenumber+"&message="+message, String.class);
+                +smspassword+"&recipient="+phonenumber+"&messagedata="+message, String.class);
     }
 }
