@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -41,7 +44,8 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
 
     @Value("${staffapp.auth.signingkey}")
     String signingkey;
-
+//    @Autowired
+//    private WebResponseExceptionTranslator oauth2ResponseExceptionTranslator;
 
     @Override
     public void configure(final AuthorizationServerSecurityConfigurer oauthserver) throws Exception {
@@ -49,6 +53,21 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
                 .allowFormAuthenticationForClients()
                 .tokenKeyAccess("permitAll()")
                 .checkTokenAccess("permitAll()");
+    }
+
+    @Bean
+    public AuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(userService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        daoAuthenticationProvider.setHideUserNotFoundExceptions(false);
+        return daoAuthenticationProvider;
+    }
+
+    @Autowired
+    public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+        authenticationManagerBuilder
+                .authenticationProvider(daoAuthenticationProvider());
     }
 //
     @Override
@@ -67,8 +86,9 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
         endpoints
                 .tokenStore(tokenStore())
                 .tokenEnhancer(tokenEnhancerChain)
-                .authenticationManager(authenticationManagerBean)
-                .userDetailsService(userService);
+                .authenticationManager(authenticationManagerBean);
+//                .userDetailsService(userService)
+//                .exceptionTranslator(oauth2ResponseExceptionTranslator);
     }
 
 

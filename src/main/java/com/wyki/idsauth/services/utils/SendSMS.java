@@ -2,6 +2,7 @@ package com.wyki.idsauth.services.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -9,11 +10,11 @@ import org.springframework.web.client.RestTemplate;
 @Service @Slf4j
 public class SendSMS {
 
-    @Value("internal.sendsms.endpoint")
+    @Value("${internal.sendsms.endpoint}")
     String smsendpoint;
-    @Value("internal.sendsms.username")
+    @Value("${internal.sendsms.username}")
     String smsusername;
-    @Value("internal.sendsms.password")
+    @Value("${internal.sendsms.password}")
     String smspassword;
 
 
@@ -22,8 +23,10 @@ public class SendSMS {
 
     @Async
     public void sendSMS(String message, String phonenumber) {
-        log.info("send text to "+phonenumber);
-        restTemplate.getForEntity(smsendpoint+"sms?action=sendmessage&username="+smsusername+"&password="
-                +smspassword+"&recipient="+phonenumber+"&messagedata="+message, String.class);
+//        log.info("send text to "+phonenumber);
+        String smspayload = smsendpoint+"sms?action=sendmessage&username="+smsusername+"&password="
+                +smspassword+"&recipient="+phonenumber+"&messagedata="+message;
+       ResponseEntity<String> result = restTemplate.getForEntity(smspayload, String.class);
+       log.info(result.getBody());
     }
 }

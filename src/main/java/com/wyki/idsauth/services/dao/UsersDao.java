@@ -77,7 +77,7 @@ public class UsersDao {
         }
     }
 
-//    @Transactional
+    @Transactional
     public ResponseWrapper registerUser(String identificationnumber) {
         List<Users> dbusersList = dbusersRepo.findByNationalidnumber(identificationnumber);
         ResponseWrapper responseWrapper = new ResponseWrapper();
