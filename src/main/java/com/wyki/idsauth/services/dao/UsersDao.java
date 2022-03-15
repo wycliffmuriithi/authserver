@@ -14,6 +14,7 @@ import com.wyki.idsauth.db.entities.Userroles;
 import com.wyki.idsauth.db.entities.Users;
 import com.wyki.idsauth.services.ImposterService;
 import com.wyki.idsauth.services.utils.SendEmail;
+import com.wyki.idsauth.services.utils.SendSMS;
 import com.wyki.idsauth.wrappers.ImposterWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,8 @@ public class UsersDao {
     ActivedirectoryRepo activedirectoryRepo;
     @Autowired
     SendEmail sendEmail;
+    @Autowired
+    SendSMS sendSMS;
 
     @Value("${otp.expiry.timeinminutes}")
     int otpexpirytime;
@@ -74,7 +77,7 @@ public class UsersDao {
         }
     }
 
-    @Transactional
+//    @Transactional
     public ResponseWrapper registerUser(String identificationnumber) {
         List<Users> dbusersList = dbusersRepo.findByNationalidnumber(identificationnumber);
         ResponseWrapper responseWrapper = new ResponseWrapper();
@@ -121,9 +124,11 @@ public class UsersDao {
                         c.setTime(new Date());
                         c.add(Calendar.MINUTE, otpexpirytime);
                         dbUser.setOtpexpirytime(c.getTime());
+                        dbusersRepo.save(dbUser);
                         responseWrapper.setStatus("success");
                         responseWrapper.setBody("user created, use otp to set password");
                         try {
+                            sendSMS.sendSMS(String.format(otpusermessage, otp), activedirectoryuser.getTelephone());
                             sendEmail.sendEmail(activedirectoryuser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
                         } catch (Exception ex) {
                             log.error(ex.getMessage(),ex);
@@ -132,7 +137,7 @@ public class UsersDao {
 
 
 //                        dbUser =
-                        dbusersRepo.save(dbUser);
+
                     }
 //                    addRoles(roleid, dbUser);
 
@@ -182,7 +187,22 @@ public class UsersDao {
             responseWrapper.setStatus("success");
             responseWrapper.setBody("use otp to set new password");
             try {
-                sendEmail.sendEmail(dbUser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
+                if(dbUser.getPhonenumber()==null || dbUser.getPhonenumber().isEmpty()){
+                    //try updating details from AD
+                    responseWrapper = getActiveDirectoryDetails(  dbUser.getFirstname()+ " " +dbUser.getOthernames());
+                    if (responseWrapper.getStatus().equals("success")) {
+                        ActiveDirectory activedirectoryuser = (ActiveDirectory) responseWrapper.getBody();
+                        dbUser.setEmail(activedirectoryuser.getEmail());
+                        dbUser.setPhonenumber(activedirectoryuser.getTelephone());
+                        dbusersRepo.save(dbUser);
+
+                        sendSMS.sendSMS(String.format(otpusermessage, otp), dbUser.getPhonenumber());
+                        sendEmail.sendEmail(dbUser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
+                    }
+                }else {
+                    sendSMS.sendSMS(String.format(otpusermessage, otp), dbUser.getPhonenumber());
+                    sendEmail.sendEmail(dbUser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
+                }
             } catch (Exception ex) {
                 log.error(ex.getMessage(),ex);
                 responseWrapper.setBody("could not send email, use forgot password for new otp");
