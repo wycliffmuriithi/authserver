@@ -7,7 +7,6 @@ import com.wyki.idsauth.controllers.wrappers.UserWrapper;
 import com.wyki.idsauth.db.RolesRepo;
 import com.wyki.idsauth.db.UserrolesRepo;
 import com.wyki.idsauth.db.UsersRepo;
-import com.wyki.idsauth.db.entities.ActiveDirectory;
 import com.wyki.idsauth.db.entities.Roles;
 import com.wyki.idsauth.db.entities.Userroles;
 import com.wyki.idsauth.db.entities.Users;
@@ -115,9 +114,9 @@ public class UsersDao {
 
                     responseWrapper = getActiveDirectoryDetails(staffDetails.getEmpno());
                     if (responseWrapper.getStatus().equals("success")) {
-                        ActiveDirectory activedirectoryuser = (ActiveDirectory) responseWrapper.getBody();
-                        dbUser.setEmail(activedirectoryuser.getEmail());
-                        dbUser.setPhonenumber(activedirectoryuser.getTelephone());
+                        ContactWrapper activedirectoryuser = (ContactWrapper) responseWrapper.getBody();
+                        dbUser.setEmail(activedirectoryuser.getEmail().orElse("failed"));
+                        dbUser.setPhonenumber(activedirectoryuser.getPhonenumber().orElse("failed"));
 
                         //generate OTP
                         int otp = 10000 + new Random().nextInt(9999);
@@ -131,8 +130,9 @@ public class UsersDao {
                         responseWrapper.setStatus("success");
                         responseWrapper.setBody("user created, use otp to set password");
                         try {
-                            sendSMS.sendSMS(String.format(otpusermessage, otp), activedirectoryuser.getTelephone());
-                            sendEmail.sendEmail(activedirectoryuser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
+                                sendSMS.sendSMS(String.format(otpusermessage, otp), dbUser.getPhonenumber());
+                                sendEmail.sendEmail(dbUser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
+
                         } catch (Exception ex) {
                             log.error(ex.getMessage(), ex);
                             responseWrapper.setBody("could not send email, use forgot password for new otp");
@@ -190,13 +190,15 @@ public class UsersDao {
             responseWrapper.setStatus("success");
             responseWrapper.setBody("use otp to set new password");
             try {
-                if (dbUser.getPhonenumber() == null || dbUser.getPhonenumber().isEmpty()) {
+                if (dbUser.getPhonenumber() == null || dbUser.getPhonenumber().isEmpty() || dbUser.getPhonenumber().equals("failed")) {
                     //try updating details from AD
                     responseWrapper = getActiveDirectoryDetails(dbUser.getFirstname() + " " + dbUser.getOthernames());
                     if (responseWrapper.getStatus().equals("success")) {
                         ContactWrapper activedirectoryuser = (ContactWrapper) responseWrapper.getBody();
-                        dbUser.setEmail(activedirectoryuser.getEmail());
-                        dbUser.setPhonenumber(activedirectoryuser.getPhonenumber() == null ? activedirectoryuser.getMobile() : activedirectoryuser.getPhonenumber());
+                        dbUser.setEmail(activedirectoryuser.getEmail().orElse("failed"));
+                        dbUser.setPhonenumber(activedirectoryuser.getPhonenumber().orElse("failed"));
+//                        dbUser.setEmail(activedirectoryuser.getEmail());
+//                        dbUser.setPhonenumber(activedirectoryuser.getPhonenumber() == null ? activedirectoryuser.getMobile() : activedirectoryuser.getPhonenumber());
                         dbusersRepo.save(dbUser);
 
                         sendSMS.sendSMS(String.format(otpusermessage, otp), dbUser.getPhonenumber());
@@ -347,7 +349,7 @@ public class UsersDao {
         ResponseWrapper responseWrapper = new ResponseWrapper();
         if (activedirectoryUsers.isEmpty()) {
             responseWrapper.setStatus("failed");
-            responseWrapper.setBody("Could not find user from AD");
+            responseWrapper.setBody("Could not load user contacts from AD");
         } else {
             responseWrapper.setStatus("success");
             responseWrapper.setBody(activedirectoryUsers.get(0));
