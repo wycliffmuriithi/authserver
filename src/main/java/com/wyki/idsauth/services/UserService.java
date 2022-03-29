@@ -60,7 +60,7 @@ public class UserService implements UserDetailsService {
 
         } else {
             LOGGER.info("user does not exist");
-            throw new UsernameNotFoundException(username);
+            throw new UsernameNotFoundException("user "+username+" does not exist");
         }
 
     }

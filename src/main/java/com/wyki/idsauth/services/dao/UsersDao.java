@@ -4,7 +4,6 @@ import com.wyki.idsauth.controllers.wrappers.ResponseWrapper;
 import com.wyki.idsauth.controllers.wrappers.RoleWrapper;
 import com.wyki.idsauth.controllers.wrappers.UserStats;
 import com.wyki.idsauth.controllers.wrappers.UserWrapper;
-import com.wyki.idsauth.db.ActivedirectoryRepo;
 import com.wyki.idsauth.db.RolesRepo;
 import com.wyki.idsauth.db.UserrolesRepo;
 import com.wyki.idsauth.db.UsersRepo;
@@ -13,8 +12,10 @@ import com.wyki.idsauth.db.entities.Roles;
 import com.wyki.idsauth.db.entities.Userroles;
 import com.wyki.idsauth.db.entities.Users;
 import com.wyki.idsauth.services.ImposterService;
+import com.wyki.idsauth.services.utils.LdapService;
 import com.wyki.idsauth.services.utils.SendEmail;
 import com.wyki.idsauth.services.utils.SendSMS;
+import com.wyki.idsauth.wrappers.ContactWrapper;
 import com.wyki.idsauth.wrappers.ImposterWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +46,10 @@ public class UsersDao {
     UserrolesRepo userrolesRepo;
     @Autowired
     ImposterService imposterService;
+    //    @Autowired
+//    ActivedirectoryRepo activedirectoryRepo;
     @Autowired
-    ActivedirectoryRepo activedirectoryRepo;
+    LdapService ldapService;
     @Autowired
     SendEmail sendEmail;
     @Autowired
@@ -69,7 +72,7 @@ public class UsersDao {
 
     @Transactional
     public Optional<Users> loadUserByusername(String username) {
-        List<Users> dbusersList = dbusersRepo.findByEmailOrPhonenumberOrNationalidnumber(username, username,username);
+        List<Users> dbusersList = dbusersRepo.findByEmailOrPhonenumberOrNationalidnumber(username, username, username);
         if (dbusersList.isEmpty()) {
             return Optional.empty();
         } else {
@@ -110,7 +113,7 @@ public class UsersDao {
 
                     dbUser = dbusersRepo.save(dbUser);
 
-                    responseWrapper = getActiveDirectoryDetails(staffDetails.getOthernames() + " " + staffDetails.getSurname());
+                    responseWrapper = getActiveDirectoryDetails(staffDetails.getEmpno());
                     if (responseWrapper.getStatus().equals("success")) {
                         ActiveDirectory activedirectoryuser = (ActiveDirectory) responseWrapper.getBody();
                         dbUser.setEmail(activedirectoryuser.getEmail());
@@ -131,7 +134,7 @@ public class UsersDao {
                             sendSMS.sendSMS(String.format(otpusermessage, otp), activedirectoryuser.getTelephone());
                             sendEmail.sendEmail(activedirectoryuser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
                         } catch (Exception ex) {
-                            log.error(ex.getMessage(),ex);
+                            log.error(ex.getMessage(), ex);
                             responseWrapper.setBody("could not send email, use forgot password for new otp");
                         }
 
@@ -166,7 +169,7 @@ public class UsersDao {
 
     }
 
-    public ResponseWrapper forgotPassword(String nationalid){
+    public ResponseWrapper forgotPassword(String nationalid) {
         List<Users> dbusersList = dbusersRepo.findByNationalidnumber(nationalid);
         ResponseWrapper responseWrapper = new ResponseWrapper();
         responseWrapper.setStatus("failed");
@@ -187,24 +190,24 @@ public class UsersDao {
             responseWrapper.setStatus("success");
             responseWrapper.setBody("use otp to set new password");
             try {
-                if(dbUser.getPhonenumber()==null || dbUser.getPhonenumber().isEmpty()){
+                if (dbUser.getPhonenumber() == null || dbUser.getPhonenumber().isEmpty()) {
                     //try updating details from AD
-                    responseWrapper = getActiveDirectoryDetails(  dbUser.getFirstname()+ " " +dbUser.getOthernames());
+                    responseWrapper = getActiveDirectoryDetails(dbUser.getFirstname() + " " + dbUser.getOthernames());
                     if (responseWrapper.getStatus().equals("success")) {
-                        ActiveDirectory activedirectoryuser = (ActiveDirectory) responseWrapper.getBody();
+                        ContactWrapper activedirectoryuser = (ContactWrapper) responseWrapper.getBody();
                         dbUser.setEmail(activedirectoryuser.getEmail());
-                        dbUser.setPhonenumber(activedirectoryuser.getTelephone());
+                        dbUser.setPhonenumber(activedirectoryuser.getPhonenumber() == null ? activedirectoryuser.getMobile() : activedirectoryuser.getPhonenumber());
                         dbusersRepo.save(dbUser);
 
                         sendSMS.sendSMS(String.format(otpusermessage, otp), dbUser.getPhonenumber());
                         sendEmail.sendEmail(dbUser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
                     }
-                }else {
+                } else {
                     sendSMS.sendSMS(String.format(otpusermessage, otp), dbUser.getPhonenumber());
                     sendEmail.sendEmail(dbUser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
                 }
             } catch (Exception ex) {
-                log.error(ex.getMessage(),ex);
+                log.error(ex.getMessage(), ex);
                 responseWrapper.setBody("could not send email, use forgot password for new otp");
             }
 
@@ -340,14 +343,11 @@ public class UsersDao {
     private ResponseWrapper getActiveDirectoryDetails(String name) {
         name = name.toUpperCase();
         log.info("searching for ad user " + name);
-        List<ActiveDirectory> activedirectoryUsers = activedirectoryRepo.findByStaffname(name);
+        List<ContactWrapper> activedirectoryUsers = ldapService.search(name);
         ResponseWrapper responseWrapper = new ResponseWrapper();
         if (activedirectoryUsers.isEmpty()) {
             responseWrapper.setStatus("failed");
             responseWrapper.setBody("Could not find user from AD");
-        } else if (activedirectoryUsers.size() > 1) {
-            responseWrapper.setStatus("failed");
-            responseWrapper.setBody("Multiple users returned with same name from AD");
         } else {
             responseWrapper.setStatus("success");
             responseWrapper.setBody(activedirectoryUsers.get(0));
