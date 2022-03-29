@@ -130,8 +130,12 @@ public class UsersDao {
                         responseWrapper.setStatus("success");
                         responseWrapper.setBody("user created, use otp to set password");
                         try {
+                            if(!dbUser.getPhonenumber().equals("failed")) {
                                 sendSMS.sendSMS(String.format(otpusermessage, otp), dbUser.getPhonenumber());
+                            }
+                            if(!dbUser.getEmail().equals("failed")) {
                                 sendEmail.sendEmail(dbUser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
+                            }
 
                         } catch (Exception ex) {
                             log.error(ex.getMessage(), ex);
@@ -201,12 +205,20 @@ public class UsersDao {
 //                        dbUser.setPhonenumber(activedirectoryuser.getPhonenumber() == null ? activedirectoryuser.getMobile() : activedirectoryuser.getPhonenumber());
                         dbusersRepo.save(dbUser);
 
-                        sendSMS.sendSMS(String.format(otpusermessage, otp), dbUser.getPhonenumber());
-                        sendEmail.sendEmail(dbUser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
+                        if(!dbUser.getPhonenumber().equals("failed")) {
+                            sendSMS.sendSMS(String.format(otpusermessage, otp), dbUser.getPhonenumber());
+                        }
+                        if(!dbUser.getEmail().equals("failed")) {
+                            sendEmail.sendEmail(dbUser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
+                        }
                     }
                 } else {
-                    sendSMS.sendSMS(String.format(otpusermessage, otp), dbUser.getPhonenumber());
-                    sendEmail.sendEmail(dbUser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
+                    if(!dbUser.getPhonenumber().equals("failed")) {
+                        sendSMS.sendSMS(String.format(otpusermessage, otp), dbUser.getPhonenumber());
+                    }
+                    if(!dbUser.getEmail().equals("failed")) {
+                        sendEmail.sendEmail(dbUser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
+                    }
                 }
             } catch (Exception ex) {
                 log.error(ex.getMessage(), ex);
