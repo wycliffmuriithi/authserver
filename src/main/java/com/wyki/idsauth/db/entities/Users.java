@@ -19,7 +19,7 @@ import java.util.List;
 @Data @ToString
 @AllArgsConstructor @NoArgsConstructor
 public class Users {
-    private String firstname;
+    private String name;
     @Column(columnDefinition = "VARCHAR(1024)")
     private String password;
     private String email;
@@ -27,7 +27,6 @@ public class Users {
     private  @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long  userid;
-    private  String othernames;
     private Date dateofbirth;
     private String gender;
     @Column(columnDefinition = "VARCHAR(1024)")
@@ -42,9 +41,7 @@ public class Users {
     @Column(columnDefinition = "VARCHAR(1024)")
     private String resourceid;
     private int attempts;
-    String employeenumber;
-    String region;
-    String department;
+
 
     String otp;
     @Column(columnDefinition = "CHAR(1) DEFAULT 0")

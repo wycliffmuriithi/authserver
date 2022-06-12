@@ -1,21 +1,14 @@
 package com.wyki.idsauth.services.dao;
 
-import com.wyki.idsauth.controllers.wrappers.ResponseWrapper;
-import com.wyki.idsauth.controllers.wrappers.RoleWrapper;
-import com.wyki.idsauth.controllers.wrappers.UserStats;
-import com.wyki.idsauth.controllers.wrappers.UserWrapper;
+import com.wyki.idsauth.controllers.wrappers.*;
 import com.wyki.idsauth.db.RolesRepo;
 import com.wyki.idsauth.db.UserrolesRepo;
 import com.wyki.idsauth.db.UsersRepo;
 import com.wyki.idsauth.db.entities.Roles;
 import com.wyki.idsauth.db.entities.Userroles;
 import com.wyki.idsauth.db.entities.Users;
-import com.wyki.idsauth.services.ImposterService;
-import com.wyki.idsauth.services.utils.LdapService;
 import com.wyki.idsauth.services.utils.SendEmail;
 import com.wyki.idsauth.services.utils.SendSMS;
-import com.wyki.idsauth.wrappers.ContactWrapper;
-import com.wyki.idsauth.wrappers.ImposterWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,12 +36,9 @@ public class UsersDao {
     RolesRepo roleRepo;
     @Autowired
     UserrolesRepo userrolesRepo;
-    @Autowired
-    ImposterService imposterService;
-    //    @Autowired
-//    ActivedirectoryRepo activedirectoryRepo;
-    @Autowired
-    LdapService ldapService;
+
+
+
     @Autowired
     SendEmail sendEmail;
     @Autowired
@@ -63,12 +53,6 @@ public class UsersDao {
     String otpusersubject;
 
 
-//    public UsersDao(UsersRepo usersRepo, BCryptPasswordEncoder passwordEncoder,RolesRepo roleRepo){
-//        this.dbusersRepo=usersRepo;
-//        this.encoder=passwordEncoder;
-//        this.roleRepo=roleRepo;
-//    }
-
     @Transactional
     public Optional<Users> loadUserByusername(String username) {
         List<Users> dbusersList = dbusersRepo.findByEmailOrPhonenumberOrNationalidnumber(username, username, username);
@@ -80,90 +64,46 @@ public class UsersDao {
     }
 
     @Transactional
-    public ResponseWrapper registerUser(String identificationnumber) {
-        List<Users> dbusersList = dbusersRepo.findByNationalidnumber(identificationnumber);
+    public ResponseWrapper registerUser(AddUserDTO addUserDTO) {
+        List<Users> dbusersList = dbusersRepo.findByNationalidnumber(addUserDTO.getNationalid());
         ResponseWrapper responseWrapper = new ResponseWrapper();
         responseWrapper.setStatus("failed");
         if (dbusersList.isEmpty()) {
             //check staff
-            Map<Boolean, ImposterWrapper> result = imposterService.checkStaff(identificationnumber);
-            if (result.containsKey(true)) {
-                ImposterWrapper imposterWrapper = result.get(true);
-                ImposterWrapper.StaffDetails.Staff staffDetails = imposterWrapper.getStaffdetails().getStaff();
 
-                if (staffDetails.getStatus().equalsIgnoreCase("Active")) {
-                    Users dbUser = new Users();
-                    dbUser.setFirstname(staffDetails.getSurname());
-                    dbUser.setOthernames(staffDetails.getOthernames());
-//                    dbUser.setEmail(email);
-//                    dbUser.setPhonenumber(phonenumber);
-                    dbUser.setDateofbirth(new Date());
-                    dbUser.setGender("BINARY");
-                    dbUser.setNationality("KENYAN");
-                    dbUser.setNationalidnumber(identificationnumber);
-                    dbUser.setRegistrationdate(new Date());
-                    dbUser.setCreatedby("");
-                    dbUser.setRegion(staffDetails.getRegionname());
-                    dbUser.setDepartment(staffDetails.getDeptname());
-                    dbUser.setEmployeenumber(staffDetails.getEmpno());
+            Users dbUser = new Users();
+            dbUser.setName(addUserDTO.getName());
+            dbUser.setDateofbirth(new Date());
+            dbUser.setGender("BINARY");
+            dbUser.setNationality("Rwandese");
+            dbUser.setNationalidnumber(addUserDTO.getNationalid());
+            dbUser.setRegistrationdate(new Date());
+            dbUser.setCreatedby("");
 
+
+            dbUser.setEmail(addUserDTO.getEmail());
+            dbUser.setPhonenumber(addUserDTO.getPhonenumber());
+
+            //generate OTP
+            int otp = 10000 + new Random().nextInt(9999);
+            dbUser.setOtp(String.valueOf(otp));
+            dbUser.setValidotp(true);
+            Calendar c = Calendar.getInstance();
+            c.setTime(new Date());
+            c.add(Calendar.MINUTE, otpexpirytime);
+            dbUser.setOtpexpirytime(c.getTime());
 
 //            dbUser.setResourceid(resourceid);
 
-                    dbUser = dbusersRepo.save(dbUser);
+            dbUser = dbusersRepo.save(dbUser);
 
-                    responseWrapper = getActiveDirectoryDetails(staffDetails.getEmpno());
-                    if (responseWrapper.getStatus().equals("success")) {
-                        ContactWrapper activedirectoryuser = (ContactWrapper) responseWrapper.getBody();
-                        dbUser.setEmail(activedirectoryuser.getEmail().orElse("failed"));
-                        dbUser.setPhonenumber(activedirectoryuser.getPhonenumber().orElse("failed"));
+//            dbusersRepo.save(dbUser);
+            responseWrapper.setStatus("success");
+            responseWrapper.setBody("user created, use otp to set password");
 
-                        //generate OTP
-                        int otp = 10000 + new Random().nextInt(9999);
-                        dbUser.setOtp(String.valueOf(otp));
-                        dbUser.setValidotp(true);
-                        Calendar c = Calendar.getInstance();
-                        c.setTime(new Date());
-                        c.add(Calendar.MINUTE, otpexpirytime);
-                        dbUser.setOtpexpirytime(c.getTime());
-                        dbusersRepo.save(dbUser);
-                        responseWrapper.setStatus("success");
-                        responseWrapper.setBody("user created, use otp to set password");
-                        try {
-                            if(!dbUser.getPhonenumber().equals("failed")) {
-                                sendSMS.sendSMS(String.format(otpusermessage, otp), dbUser.getPhonenumber());
-                            }
-                            if(!dbUser.getEmail().equals("failed")) {
-                                sendEmail.sendEmail(dbUser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
-                            }
-
-                        } catch (Exception ex) {
-                            log.error(ex.getMessage(), ex);
-                            responseWrapper.setBody("could not send email, use forgot password for new otp");
-                        }
+            return responseWrapper;
 
 
-//                        dbUser =
-
-                    }
-//                    addRoles(roleid, dbUser);
-
-                    return responseWrapper;
-                } else {
-                    //user already registered
-                    responseWrapper.setBody("staff in not an active employee");
-
-                    return responseWrapper;
-                }
-
-
-            } else {
-
-                responseWrapper.setBody(result.get(false) == null ? "error creating user" :
-                        result.get(false).getStaffdetails().getResult().getMessage());
-
-                return responseWrapper;
-            }
         } else {
             //user already registered
             responseWrapper.setBody("user already exists");
@@ -193,39 +133,6 @@ public class UsersDao {
             dbusersRepo.save(dbUser);
             responseWrapper.setStatus("success");
             responseWrapper.setBody("use otp to set new password");
-            try {
-                if (dbUser.getPhonenumber() == null || dbUser.getPhonenumber().isEmpty() || dbUser.getPhonenumber().equals("failed")) {
-                    //try updating details from AD
-                    responseWrapper = getActiveDirectoryDetails(dbUser.getFirstname() + " " + dbUser.getOthernames());
-                    if (responseWrapper.getStatus().equals("success")) {
-                        ContactWrapper activedirectoryuser = (ContactWrapper) responseWrapper.getBody();
-                        dbUser.setEmail(activedirectoryuser.getEmail().orElse("failed"));
-                        dbUser.setPhonenumber(activedirectoryuser.getPhonenumber().orElse("failed"));
-//                        dbUser.setEmail(activedirectoryuser.getEmail());
-//                        dbUser.setPhonenumber(activedirectoryuser.getPhonenumber() == null ? activedirectoryuser.getMobile() : activedirectoryuser.getPhonenumber());
-                        dbusersRepo.save(dbUser);
-
-                        if(!dbUser.getPhonenumber().equals("failed")) {
-                            sendSMS.sendSMS(String.format(otpusermessage, otp), dbUser.getPhonenumber());
-                        }
-                        if(!dbUser.getEmail().equals("failed")) {
-                            sendEmail.sendEmail(dbUser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
-                        }
-                    }
-                } else {
-                    if(!dbUser.getPhonenumber().equals("failed")) {
-                        sendSMS.sendSMS(String.format(otpusermessage, otp), dbUser.getPhonenumber());
-                    }
-                    if(!dbUser.getEmail().equals("failed")) {
-                        sendEmail.sendEmail(dbUser.getEmail(), String.format(otpusermessage, otp), otpusersubject);
-                    }
-                }
-            } catch (Exception ex) {
-                log.error(ex.getMessage(), ex);
-                responseWrapper.setBody("could not send email, use forgot password for new otp");
-            }
-
-
         }
 
         return responseWrapper;
@@ -320,11 +227,9 @@ public class UsersDao {
                     UserWrapper userWrapper = new UserWrapper();
                     userWrapper.setUserid(user.getUserid());
                     userWrapper.setEmail(user.getEmail());
-                    userWrapper.setName(user.getFirstname() + " " + user.getOthernames());
+                    userWrapper.setName(user.getName());
                     userWrapper.setPhonenumber(user.getPhonenumber());
-                    userWrapper.setEmployeenumber(user.getEmployeenumber());
-                    userWrapper.setRegion(user.getRegion());
-                    userWrapper.setDepartment(user.getDepartment());
+
                     userWrapper.setActive(user.isActive());
 
 
@@ -354,19 +259,5 @@ public class UsersDao {
     }
 
 
-    private ResponseWrapper getActiveDirectoryDetails(String name) {
-        name = name.toUpperCase();
-        log.info("searching for ad user " + name);
-        List<ContactWrapper> activedirectoryUsers = ldapService.search(name);
-        ResponseWrapper responseWrapper = new ResponseWrapper();
-        if (activedirectoryUsers.isEmpty()) {
-            responseWrapper.setStatus("failed");
-            responseWrapper.setBody("Could not load user contacts from AD");
-        } else {
-            responseWrapper.setStatus("success");
-            responseWrapper.setBody(activedirectoryUsers.get(0));
-        }
-        return responseWrapper;
 
-    }
 }

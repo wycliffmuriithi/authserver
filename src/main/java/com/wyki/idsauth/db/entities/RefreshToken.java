@@ -2,10 +2,7 @@ package com.wyki.idsauth.db.entities;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "oauth_refresh_token")
@@ -13,8 +10,8 @@ import javax.persistence.Table;
 public class RefreshToken {
     @Column(name = "token_id") @Id
     String tokenid;
-    @Column(name = "token",columnDefinition = "BLOB")
+    @Column(name = "token")@Lob
     String token;
-    @Column(name = "authentication",columnDefinition = "BLOB")
+    @Column(name = "authentication")@Lob
     String authentication;
 }

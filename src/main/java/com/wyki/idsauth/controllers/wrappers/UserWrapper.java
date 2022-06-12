@@ -11,11 +11,7 @@ public class UserWrapper {
     String nationalid;
     String email;
     String phonenumber;
-//    String password;
 
-    String employeenumber;
-    String region;
-    String department;
     boolean active;
 
     Date createdon;

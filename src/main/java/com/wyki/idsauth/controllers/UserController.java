@@ -30,11 +30,8 @@ public class UserController {
         UserWrapper userWrapper = new UserWrapper();
         userWrapper.setUserid(user.getUserid());
         userWrapper.setEmail(user.getEmail());
-        userWrapper.setName(user.getFirstname() + " " + user.getOthernames());
+        userWrapper.setName(user.getName());
         userWrapper.setPhonenumber(user.getPhonenumber());
-        userWrapper.setEmployeenumber(user.getEmployeenumber());
-        userWrapper.setRegion(user.getRegion());
-        userWrapper.setDepartment(user.getDepartment());
         userWrapper.setActive(user.isActive());
 
 

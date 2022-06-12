@@ -30,9 +30,6 @@ public class CustomTokenEnhancer implements TokenEnhancer {
        Users dbuser =usersDao.loadUserByusername(user.getUsername()).get();
 
 //        String resourcename = resourceids.toArray(new String[resourceids.size()])[0];
-        additionalInfo.put("name", dbuser.getFirstname());
-        additionalInfo.put("employeenumber", dbuser.getEmployeenumber());
-        additionalInfo.put("department", dbuser.getDepartment());
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(
                 additionalInfo);
         return accessToken;

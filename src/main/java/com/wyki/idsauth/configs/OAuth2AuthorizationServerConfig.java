@@ -42,7 +42,7 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     @Autowired
     UserService userService;
 
-    @Value("${staffapp.auth.signingkey}")
+    @Value("${miniagri.auth.signingkey}")
     String signingkey;
 //    @Autowired
 //    private WebResponseExceptionTranslator oauth2ResponseExceptionTranslator;

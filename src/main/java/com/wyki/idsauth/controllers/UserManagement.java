@@ -19,14 +19,8 @@ public class UserManagement {
     @PostMapping("/register")
     public ResponseWrapper registerUser(@RequestBody AddUserDTO userWrapper) {
 
-        ResponseWrapper responseWrapper = usersDao.registerUser(userWrapper.getNationalid());
+        ResponseWrapper responseWrapper = usersDao.registerUser(userWrapper);
 
-//        if (responseWrapper.getStatus().equals("success")) {
-//            usersDao.updateUserPassword(userWrapper.getEmail(), userWrapper.getPhonenumber(), userWrapper.getPassword());
-//            response.setStatus("success");
-//            response.setBody("user created successfully");
-
-//        }
         return responseWrapper;
     }
 
