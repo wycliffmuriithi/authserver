@@ -28,7 +28,7 @@ public class OrganizationDao extends UsersCommonDao {
         }
         Organizations organizations = new Organizations();
         organizations.setName(name);
-        organizations.setCreatedby(getUseridfromOptional(name));
+        organizations.setCreatedby(getUseridfromOptional(createdby));
         organizations = organizationRepo.save(organizations);
         return new ResponseWrapper("success", "organization created", organizations);
     }
@@ -48,7 +48,7 @@ public class OrganizationDao extends UsersCommonDao {
         }
         Groups groups = new Groups();
         groups.setName(name);
-        groups.setCreatedby(getUseridfromOptional(name));
+        groups.setCreatedby(getUseridfromOptional(createdby));
         groups = groupsRepo.save(groups);
         return new ResponseWrapper("success", "group created", groups);
     }
