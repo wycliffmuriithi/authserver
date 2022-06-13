@@ -36,7 +36,7 @@ public class Users {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date registrationdate;
-    private String resourceid;
+    private Long organizationid;
     private int attempts;
 
 

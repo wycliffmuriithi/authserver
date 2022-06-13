@@ -21,10 +21,5 @@ public class Roles implements Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     long roleid;
     String name;
-    @Column(columnDefinition = "VARCHAR(1024)")
-    String rules;
-    @OneToMany(mappedBy = "roles")
-    private List<Userroles> users;
-    @Column(columnDefinition = "VARCHAR(1024)")
-    String resourceid;
+    String description;
 }
