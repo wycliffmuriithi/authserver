@@ -30,7 +30,7 @@
 //
 //    private  Logger LOGGER = Logger.getLogger(CreateResourceserver.class);
 //
-//    @Scheduled(fixedRate = 1000 * 5,initialDelay = 5000)
+//    @Scheduled(fixedRate = 1000 * 5,initialDelay = 10000)
 //    public void runtest(){
 //        //insert a bcrypt encoded record to db
 //        OauthclientDetails oauthclientDetails = new OauthclientDetails();
@@ -40,10 +40,10 @@
 //        oauthclientDetails.setAuthorities(null);
 //        oauthclientDetails.setAuthorizedGrantTypes("password,authorization_code,refresh_token,client_credentials");
 //        oauthclientDetails.setAutoapprove("true");
-//        oauthclientDetails.setClientId("staffapp_clientid_"+new Random().nextInt(1000));
+//        oauthclientDetails.setClientId("miniagri_clientid_"+new Random().nextInt(1000));
 //        oauthclientDetails.setClientSecret(encoder.encode("secret"));
 //        oauthclientDetails.setRefreshTokenValidity(36000);
-//        oauthclientDetails.setResourceIds("staffapp");
+//        oauthclientDetails.setResourceIds("miniagri");
 //        oauthclientDetails.setScope("read,write");
 //        oauthclientDetails.setWebServerRedirectUri(null);
 //
@@ -53,11 +53,11 @@
 //
 //        Users users = new Users();
 //        users.setActive(true);
-//        users.setEmail("wycliff.muriithi@kra.go.ke");
+//        users.setEmail("wycliff.muriithi@gmail.com");
 //        users.setPhonenumber("254715702886");
 //        users.setPassword(encoder.encode("password"));
 //
-//        usersRepo.save(users);
+////        usersRepo.save(users);
 //
 ////        StationUsers stationUsers = new StationUsers();
 //
