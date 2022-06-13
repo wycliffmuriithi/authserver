@@ -6,7 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.util.Date;
 
-@Table(name="miniagri_organizations")
+@Table(name = "miniagri_organizations")
 @Entity
 @Data
 public class Organizations {
@@ -14,7 +14,7 @@ public class Organizations {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
     String name;
-
+    Long createdby;
     @CreationTimestamp
     Date creationdate;
 }

@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class UsersDao {
-    @Autowired
-    private UsersRepo dbusersRepo;
+public class UsersDao extends UsersCommonDao{
+//    @Autowired
+//    private UsersRepo dbusersRepo;
     @Autowired
     private BCryptPasswordEncoder encoder;
     @Autowired
@@ -53,15 +53,6 @@ public class UsersDao {
     String otpusersubject;
 
 
-    @Transactional
-    public Optional<Users> loadUserByusername(String username) {
-        List<Users> dbusersList = dbusersRepo.findByEmailOrPhonenumberOrNationalidnumber(username, username, username);
-        if (dbusersList.isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(dbusersList.get(0));
-        }
-    }
 
     @Transactional
     public ResponseWrapper registerUser(AddUserDTO addUserDTO) {
@@ -138,17 +129,7 @@ public class UsersDao {
         return responseWrapper;
     }
 
-    private void addRoles(Long roleid, Users dbUser) {
-        Optional<Roles> rolesList = roleRepo.findById(roleid);
-        Optional<Userroles> userrolescontainer = userrolesRepo.findbyUserRole(dbUser.getUserid(), roleid);
-        if (rolesList.isPresent() && !userrolescontainer.isPresent()) {
-            Userroles userroles = new Userroles();
-            userroles.setRoles(rolesList.get());
-            userroles.setUsers(dbUser);
 
-            userrolesRepo.save(userroles);
-        }
-    }
 
     public void updatePhoneandEmail(long userid, String newphone, String newemail) {
         Optional<Users> users = dbusersRepo.findById(userid);

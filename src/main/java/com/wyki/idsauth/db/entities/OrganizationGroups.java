@@ -13,7 +13,9 @@ public class OrganizationGroups {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+    Long organizationid;
     Long groupid;
     @CreationTimestamp
     Date creationdate;
+    Long createdby;
 }

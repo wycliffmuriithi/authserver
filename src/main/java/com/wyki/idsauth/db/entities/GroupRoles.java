@@ -13,8 +13,10 @@ public class GroupRoles {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+    Long groupid;
     Long roleid;
 
     @CreationTimestamp
     Date creationdate;
+    Long createdby;
 }

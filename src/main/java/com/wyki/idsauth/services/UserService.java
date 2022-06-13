@@ -3,6 +3,7 @@ package com.wyki.idsauth.services;
 
 import com.wyki.idsauth.db.entities.Userroles;
 import com.wyki.idsauth.db.entities.Users;
+import com.wyki.idsauth.services.dao.UsersCommonDao;
 import com.wyki.idsauth.services.dao.UsersDao;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,9 @@ import java.util.Optional;
  * Date:6/17/2019
  */
 @Service
-public class UserService implements UserDetailsService {
-    @Autowired
-    private UsersDao dbusersDao;
+public class UserService extends UsersCommonDao implements UserDetailsService  {
+//    @Autowired
+//    private UsersDao dbusersDao;
     @Autowired
     LoginAttemptService loginAttemptService;
 
@@ -38,7 +39,7 @@ public class UserService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) {
-        Optional<Users> databaseusercontainer = dbusersDao.loadUserByusername(username);
+        Optional<Users> databaseusercontainer = loadUserByusername(username);
 
 
         if (databaseusercontainer.isPresent()) {
@@ -68,10 +69,10 @@ public class UserService implements UserDetailsService {
 
     private List loadUserRoles(Users user) {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-
-        for (Userroles userroles : user.getRoles()){
+        List<String> userroles = getRolesbyUser(user.getUserid());
+        for (String userrole : userroles){
 //            LOGGER.info("Roles for user "+user.getEmail()+" count "+ user.getRoles().size()+ " name "+userroles.getRoles().getName());
-            grantedAuthorities.add(new SimpleGrantedAuthority(userroles.getRoles().getName()));
+            grantedAuthorities.add(new SimpleGrantedAuthority(userrole));
         }
 
 //        grantedAuthorities.add(new SimpleGrantedAuthority());

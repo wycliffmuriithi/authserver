@@ -13,7 +13,7 @@ import java.util.List;
  * Creater: wgicheru
  * Date:6/17/2019
  */
-@Table(name="rolesconfig")
+@Table(name="miniagri_rolesconfig")
 @Entity
 @Data @AllArgsConstructor
 @NoArgsConstructor
