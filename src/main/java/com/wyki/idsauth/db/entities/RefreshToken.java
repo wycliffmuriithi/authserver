@@ -10,8 +10,8 @@ import javax.persistence.*;
 public class RefreshToken {
     @Column(name = "token_id") @Id
     String tokenid;
-    @Column(name = "token")@Lob
+    @Column(name = "token", columnDefinition = "BYTEA")//@Lob
     String token;
-    @Column(name = "authentication")@Lob
+    @Column(name = "authentication", columnDefinition = "BYTEA")//@Lob
     String authentication;
 }

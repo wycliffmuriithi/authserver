@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Class name: Users
@@ -33,8 +33,7 @@ public class Users {
     private String nationalidnumber;
 
     private boolean active;
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
     private Date registrationdate;
     private Long organizationid;
     private int attempts;
@@ -47,6 +46,4 @@ public class Users {
 
     private String createdby;
 
-    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
-    private List<Userroles> roles;
 }

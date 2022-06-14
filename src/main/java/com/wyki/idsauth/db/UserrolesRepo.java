@@ -23,6 +23,6 @@ public interface UserrolesRepo extends JpaRepository<Userroles,Long> {
    Long countbyUserRole(@Param("userid") long userid,@Param("roleid") long roleid);
     @Query(nativeQuery = true,
             value = "SELECT name FROM miniagri_usersroles ur JOIN miniagri_grouproles mgr ON ur.grouproleid=mgr.id " +
-                    "JOIN miniagri_rolesconfig mrc ON mgr.roleid=mrc.id WHERE ur.userid=:userid")
+                    "JOIN miniagri_rolesconfig mrc ON mgr.roleid=mrc.roleid WHERE ur.userid=:userid")
     List<String> getRolesbyUser(@Param("userid") Long userid);
 }

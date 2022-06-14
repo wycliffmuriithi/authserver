@@ -8,7 +8,7 @@ import javax.persistence.*;
 public class AccessToken {
     @Column(name = "token_id") @Id
     String token_id;
-    @Column(name = "token") @Lob
+    @Column(name = "token", columnDefinition = "BYTEA")// @Lob
     String token;
     @Column(name = "authentication_id")
     String authentication_id;
@@ -16,7 +16,7 @@ public class AccessToken {
     String user_name;
     @Column(name = "client_id")
     String client_id;
-    @Column(name = "authentication")@Lob
+    @Column(name = "authentication", columnDefinition = "BYTEA")//@Lob
     String authentication;
     @Column(name = "refresh_token")
     String refresh_token;

@@ -20,6 +20,7 @@ public class ResourceServer   extends ResourceServerConfigurerAdapter {
                 .and().authorizeRequests()
 //                .antMatchers("/api-docs/**").permitAll()
                 .antMatchers("/staff/**").authenticated()
+                .antMatchers("/organization/**").authenticated()
                 .antMatchers("/user/**").permitAll();
 //                .hasAuthority("ROLE_ADMIN");
 
@@ -28,7 +29,7 @@ public class ResourceServer   extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(final ResourceServerSecurityConfigurer config) {
         config
-                .resourceId("staffapp");
+                .resourceId("minagri");
 
     }
 }

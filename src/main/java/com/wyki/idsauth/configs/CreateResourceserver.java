@@ -40,10 +40,10 @@
 //        oauthclientDetails.setAuthorities(null);
 //        oauthclientDetails.setAuthorizedGrantTypes("password,authorization_code,refresh_token,client_credentials");
 //        oauthclientDetails.setAutoapprove("true");
-//        oauthclientDetails.setClientId("miniagri_clientid_"+new Random().nextInt(1000));
+//        oauthclientDetails.setClientId("minagri_clientid_"+new Random().nextInt(1000));
 //        oauthclientDetails.setClientSecret(encoder.encode("secret"));
 //        oauthclientDetails.setRefreshTokenValidity(36000);
-//        oauthclientDetails.setResourceIds("miniagri");
+//        oauthclientDetails.setResourceIds("minagri");
 //        oauthclientDetails.setScope("read,write");
 //        oauthclientDetails.setWebServerRedirectUri(null);
 //
@@ -57,7 +57,7 @@
 //        users.setPhonenumber("254715702886");
 //        users.setPassword(encoder.encode("password"));
 //
-////        usersRepo.save(users);
+//        usersRepo.save(users);
 //
 ////        StationUsers stationUsers = new StationUsers();
 //

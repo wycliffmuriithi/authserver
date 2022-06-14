@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface OrganizationRepo extends JpaRepository<Organizations,Long> {
-    @Query("SELECT COALESCE(0, COUNT(o)) FROM Organizations o WHERE o.name=:orgname")
+    @Query("SELECT COUNT(o) FROM Organizations o WHERE o.name=:orgname")
     Long countByName(@Param("orgname") String name);
 }
